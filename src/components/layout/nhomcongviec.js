@@ -1,29 +1,13 @@
 import {
-    DesktopOutlined,
-    TeamOutlined,
-    PlusCircleOutlined,
-    CloudOutlined,
     FileDoneOutlined,
-    MailOutlined,
   } from "@ant-design/icons";
   import { Breadcrumb, Layout, Menu, theme } from "antd";
   import { useState } from "react";
 
-
-  import { AudioOutlined } from '@ant-design/icons';
-import { Input, Space } from 'antd';
-const { Search } = Input;
-const suffix = (
-  <AudioOutlined
-    style={{
-      fontSize: 16,
-      color: '#1677ff',
-    }}
-  />
-);
-
+  import { Input} from 'antd';
+  const { Search } = Input;
   const onSearch = (value) => console.log(value);
-  const { Header, Content, Footer, Sider } = Layout;
+  const { Header, Content, Sider } = Layout;
   function getItem(label, key, icon, children) {
     return {
       key,
@@ -40,7 +24,7 @@ const suffix = (
     ]),
   
   ];
-  const NhanVienLayout = () => {
+  const CongViecLayout = () => {
     const [collapsed, setCollapsed] = useState(false);
     const {
       token: { colorBgContainer },
@@ -105,5 +89,5 @@ const suffix = (
       </Layout>
     );
   };
-  export default NhanVienLayout;
+  export default CongViecLayout;
   

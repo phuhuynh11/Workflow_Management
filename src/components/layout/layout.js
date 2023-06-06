@@ -1,14 +1,14 @@
 import {
   PieChartOutlined,
-  DesktopOutlined,
+  FileDoneOutlined,
   TeamOutlined,
   CloudOutlined,
   MailOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { useState } from "react";
-import NhanVienLayout from "./nhomcongviec";
-const { Header, Content, Footer, Sider } = Layout;
+import CongViecLayout from "./nhomcongviec";
+const {Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
     key,
@@ -19,7 +19,7 @@ function getItem(label, key, icon, children) {
 }
 const items = [
   getItem("Tổng quan", "1", <PieChartOutlined />),
-  getItem("Dự án", "sub1", <DesktopOutlined />),
+  getItem("Dự án", "sub1", <FileDoneOutlined />),
 
   getItem("Lưu Trữ", "sub2", <CloudOutlined />, [
     getItem("Gần Đây", "3"),
@@ -28,9 +28,7 @@ const items = [
     getItem("Thùng Rác", "6"),
   ]),
   getItem("Tin Nhắn", "", <MailOutlined />),
-  getItem("Thành Viên", "sub3", <TeamOutlined />, [
-    getItem("Thêm Thành Viên", "7"),
-  ]),
+  getItem("Thành Viên", "3", <TeamOutlined />),
 ];
 const AppLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -76,7 +74,7 @@ const AppLayout = () => {
             }}
           >
             
-           <NhanVienLayout/>
+           <CongViecLayout/>
           </div>
         </Content>
     
