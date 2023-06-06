@@ -5,7 +5,10 @@ import AppLayout from "./components/layout/layout";
 function App() {
   return (
     <div className="App">
-      <div><AppLayout/></div>   
+      <div>
+        <AppLayout>
+        </AppLayout>
+      </div>   
     </div>
   );
 }

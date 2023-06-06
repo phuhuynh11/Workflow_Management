@@ -7,6 +7,7 @@ import {
 } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { useState } from "react";
+import NhanVienLayout from "./nhomcongviec";
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
@@ -17,10 +18,8 @@ function getItem(label, key, icon, children) {
   };
 }
 const items = [
-  getItem("Trang Chủ", "1", <PieChartOutlined />),
-  getItem("Làm Việc", "sub1", <DesktopOutlined />, [
-    getItem("Nhóm Làm Việc", "2"),
-  ]),
+  getItem("Tổng quan", "1", <PieChartOutlined />),
+  getItem("Dự án", "sub1", <DesktopOutlined />),
 
   getItem("Lưu Trữ", "sub2", <CloudOutlined />, [
     getItem("Gần Đây", "3"),
@@ -58,12 +57,7 @@ const AppLayout = () => {
         />
       </Sider>
       <Layout>
-        <Header
-          style={{
-            padding: 0,
-            background: colorBgContainer,
-          }}
-        />
+    
         <Content
           style={{
             margin: "0 16px",
@@ -81,16 +75,11 @@ const AppLayout = () => {
               background: colorBgContainer,
             }}
           >
-            Hello page main.
+            
+           <NhanVienLayout/>
           </div>
         </Content>
-        <Footer
-          style={{
-            textAlign: "center",
-          }}
-        >
-          Ant Design ©2023 Created by Ant UED
-        </Footer>
+    
       </Layout>
     </Layout>
   );
