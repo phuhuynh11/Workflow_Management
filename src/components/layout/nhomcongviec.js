@@ -24,7 +24,11 @@ import {
     ]),
   
   ];
+<<<<<<< HEAD
   const CongViecLayout = () => {
+=======
+  const DuAnLayout = () => {
+>>>>>>> 153e63a (hjj)
     const [collapsed, setCollapsed] = useState(false);
     const {
       token: { colorBgContainer },
@@ -89,5 +93,9 @@ import {
       </Layout>
     );
   };
+<<<<<<< HEAD
   export default CongViecLayout;
+=======
+  export default DuAnLayout;
+>>>>>>> 153e63a (hjj)
   

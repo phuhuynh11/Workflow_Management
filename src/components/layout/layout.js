@@ -17,11 +17,18 @@ function getItem(label, key, icon, children) {
     label,
   };
 }
+<<<<<<< HEAD
 const items = [
   getItem("Tổng quan", "1", <PieChartOutlined />),
   getItem("Dự án", "sub1", <FileDoneOutlined />),
+=======
+>>>>>>> 153e63a (hjj)
 
-  getItem("Lưu Trữ", "sub2", <CloudOutlined />, [
+const items = [
+    getItem("Tổng quan", "1", <PieChartOutlined />),
+    getItem("Dự án", "sub1", <DesktopOutlined/>),
+
+    getItem("Lưu Trữ", "sub2", <CloudOutlined />, [
     getItem("Gần Đây", "3"),
     getItem("Tài Liệu Làm Việc", "4"),
     getItem("Tài Liệu Của Tôi", "5"),
@@ -73,8 +80,12 @@ const AppLayout = () => {
               background: colorBgContainer,
             }}
           >
+<<<<<<< HEAD
             
            <CongViecLayout/>
+=======
+
+>>>>>>> 153e63a (hjj)
           </div>
         </Content>
     
