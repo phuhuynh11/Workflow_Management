@@ -1,6 +1,12 @@
-import { FileOutlined, PieChartOutlined, UserOutlined, DesktopOutlined, TeamOutlined, } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
-import { useState } from 'react';
+import {
+  PieChartOutlined,
+  DesktopOutlined,
+  TeamOutlined,
+  CloudOutlined,
+  MailOutlined,
+} from "@ant-design/icons";
+import { Breadcrumb, Layout, Menu, theme } from "antd";
+import { useState } from "react";
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
@@ -11,15 +17,21 @@ function getItem(label, key, icon, children) {
   };
 }
 const items = [
-  getItem('Option 1', '1', <PieChartOutlined />),
-  getItem('Option 2', '2', <DesktopOutlined />),
-  getItem('User', 'sub1', <UserOutlined />, [
-    getItem('Tom', '3'),
-    getItem('Bill', '4'),
-    getItem('Alex', '5'),
+  getItem("Trang Chủ", "1", <PieChartOutlined />),
+  getItem("Làm Việc", "sub1", <DesktopOutlined />, [
+    getItem("Nhóm Làm Việc", "2"),
   ]),
-  getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
-  getItem('Files', '9', <FileOutlined />),
+
+  getItem("Lưu Trữ", "sub2", <CloudOutlined />, [
+    getItem("Gần Đây", "3"),
+    getItem("Tài Liệu Làm Việc", "4"),
+    getItem("Tài Liệu Của Tôi", "5"),
+    getItem("Thùng Rác", "6"),
+  ]),
+  getItem("Tin Nhắn", "", <MailOutlined />),
+  getItem("Thành Viên", "sub3", <TeamOutlined />, [
+    getItem("Thêm Thành Viên", "7"),
+  ]),
 ];
 const AppLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -29,12 +41,21 @@ const AppLayout = () => {
   return (
     <Layout
       style={{
-        minHeight: '100vh',
+        minHeight: "100vh",
       }}
     >
-      <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={(value) => setCollapsed(value)}
+      >
         <div className="demo-logo-vertical" />
-        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+        <Menu
+          theme="dark"
+          defaultSelectedKeys={["1"]}
+          mode="inline"
+          items={items}
+        />
       </Sider>
       <Layout>
         <Header
@@ -45,17 +66,14 @@ const AppLayout = () => {
         />
         <Content
           style={{
-            margin: '0 16px',
+            margin: "0 16px",
           }}
         >
           <Breadcrumb
             style={{
-              margin: '16px 0',
+              margin: "16px 0",
             }}
-          >
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
-          </Breadcrumb>
+          ></Breadcrumb>
           <div
             style={{
               padding: 24,
@@ -63,12 +81,12 @@ const AppLayout = () => {
               background: colorBgContainer,
             }}
           >
-            Bill is a cat.
+            Hello page main.
           </div>
         </Content>
         <Footer
           style={{
-            textAlign: 'center',
+            textAlign: "center",
           }}
         >
           Ant Design ©2023 Created by Ant UED
