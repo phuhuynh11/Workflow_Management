@@ -1,14 +1,15 @@
 import {
   PieChartOutlined,
-  FileDoneOutlined,
   TeamOutlined,
   CloudOutlined,
   MailOutlined,
+  DesktopOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { useState } from "react";
-import CongViecLayout from "./nhomcongviec";
-const {Content, Sider } = Layout;
+// import { Link } from "react-router-dom";
+// import CongViecLayout from "./nhomcongviec";
+const { Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
     key,
@@ -17,18 +18,12 @@ function getItem(label, key, icon, children) {
     label,
   };
 }
-<<<<<<< HEAD
-const items = [
-  getItem("Tổng quan", "1", <PieChartOutlined />),
-  getItem("Dự án", "sub1", <FileDoneOutlined />),
-=======
->>>>>>> 153e63a (hjj)
 
 const items = [
-    getItem("Tổng quan", "1", <PieChartOutlined />),
-    getItem("Dự án", "sub1", <DesktopOutlined/>),
+  getItem("Xem thống kê báo cáo", "1", <PieChartOutlined />),
+  getItem("Dự án", "sub1", <DesktopOutlined />),
 
-    getItem("Lưu Trữ", "sub2", <CloudOutlined />, [
+  getItem("Lưu Trữ", "sub2", <CloudOutlined />, [
     getItem("Gần Đây", "3"),
     getItem("Tài Liệu Làm Việc", "4"),
     getItem("Tài Liệu Của Tôi", "5"),
@@ -62,7 +57,6 @@ const AppLayout = () => {
         />
       </Sider>
       <Layout>
-    
         <Content
           style={{
             margin: "0 16px",
@@ -79,16 +73,8 @@ const AppLayout = () => {
               minHeight: 360,
               background: colorBgContainer,
             }}
-          >
-<<<<<<< HEAD
-            
-           <CongViecLayout/>
-=======
-
->>>>>>> 153e63a (hjj)
-          </div>
+          ></div>
         </Content>
-    
       </Layout>
     </Layout>
   );
