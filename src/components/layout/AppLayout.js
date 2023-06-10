@@ -7,9 +7,9 @@ import {
 } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { useState } from "react";
-// import { Link } from "react-router-dom";
-// import CongViecLayout from "./nhomcongviec";
-const { Content, Sider } = Layout;
+import { NavLink } from "react-router-dom";
+import Duan from "./du-an";
+const { Header, Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
     key,
@@ -21,7 +21,13 @@ function getItem(label, key, icon, children) {
 
 const items = [
   getItem("Xem thống kê báo cáo", "1", <PieChartOutlined />),
-  getItem("Dự án", "sub1", <DesktopOutlined />),
+  getItem(
+    "Dự án",
+    "sub1",
+    <NavLink to="/du-an">
+      <DesktopOutlined />
+    </NavLink>
+  ),
 
   getItem("Lưu Trữ", "sub2", <CloudOutlined />, [
     getItem("Gần Đây", "3"),
@@ -32,7 +38,8 @@ const items = [
   getItem("Tin Nhắn", "", <MailOutlined />),
   getItem("Thành Viên", "3", <TeamOutlined />),
 ];
-const AppLayout = () => {
+const AppLayout = (props) => {
+  console.log("kkkk", props);
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer },
@@ -49,6 +56,10 @@ const AppLayout = () => {
         onCollapse={(value) => setCollapsed(value)}
       >
         <div className="demo-logo-vertical" />
+        <div style={{ color: "#FFFFFF", marginLeft: 5, marginTop: 25 }}>
+          <span>Quản lý phân công công việc</span>
+        </div>
+        <hr style={{ marginLeft: 7, marginRight: 7 }} />
         <Menu
           theme="dark"
           defaultSelectedKeys={["1"]}
@@ -57,6 +68,12 @@ const AppLayout = () => {
         />
       </Sider>
       <Layout>
+        <Header
+          style={{
+            padding: 0,
+            background: colorBgContainer,
+          }}
+        />
         <Content
           style={{
             margin: "0 16px",
@@ -66,14 +83,19 @@ const AppLayout = () => {
             style={{
               margin: "16px 0",
             }}
-          ></Breadcrumb>
+          >
+            <Breadcrumb.Item>User</Breadcrumb.Item>
+            <Breadcrumb.Item>Bill</Breadcrumb.Item>
+          </Breadcrumb>
           <div
             style={{
               padding: 24,
               minHeight: 360,
               background: colorBgContainer,
             }}
-          ></div>
+          >
+            {props.children}
+          </div>
         </Content>
       </Layout>
     </Layout>

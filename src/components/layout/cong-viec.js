@@ -1,7 +1,24 @@
-import { FileDoneOutlined } from "@ant-design/icons";
-import { Breadcrumb, Layout, Menu, theme, Input } from "antd";
+import {
+  FileDoneOutlined,
+  PlusOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
+import {
+  Breadcrumb,
+  Layout,
+  Menu,
+  theme,
+  Button,
+  Modal,
+  Space,
+  Form,
+  Input,
+  Table,
+  Popconfirm,
+} from "antd";
 import { useState } from "react";
 const { Search } = Input;
+
 const onSearch = (value) => console.log(value);
 const { Header, Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
@@ -13,16 +30,14 @@ function getItem(label, key, icon, children) {
   };
 }
 const items = [
-  getItem("Dự án", "sub1", <FileDoneOutlined />, [
-    getItem("Dự án 1", "2"),
-    getItem("Dự án 2", "3"),
-  ]),
+  getItem("Dự án", "sub1", <FileDoneOutlined />, [getItem("Thêm dự án", "2")]),
 ];
-const CongViecLayout = () => {
+const CongViec = () => {
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+
   return (
     <Layout
       style={{
@@ -78,4 +93,4 @@ const CongViecLayout = () => {
     </Layout>
   );
 };
-export default CongViecLayout;
+export default CongViec;

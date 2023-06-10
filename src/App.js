@@ -1,14 +1,33 @@
 import "./App.css";
-import AppLayout from "./components/layout/layout";
-// import { Route, Switch } from "react-router-dom";
-// import CongViecLayout from "./components/layout/nhomcongviec";
+import AppLayout from "./components/layout/AppLayout";
+import Duan from "./components/layout/du-an";
+import CongViec from "./components/layout/cong-viec";
+import { Route, Switch } from "react-router-dom";
 
 function App() {
   return (
     <div className="App">
-      <div>
-        <AppLayout></AppLayout>
-      </div>
+      <Switch>
+        <Route exact path="/" component={() => <AppLayout></AppLayout>} />
+        <Route
+          exact
+          path="/du-an"
+          component={() => (
+            <AppLayout>
+              <Duan />
+            </AppLayout>
+          )}
+        />
+        <Route
+          exact
+          path="/cong-viec"
+          component={() => (
+            <AppLayout>
+              <CongViec />
+            </AppLayout>
+          )}
+        />
+      </Switch>
     </div>
   );
 }
