@@ -3,6 +3,7 @@ import {
   FileAddOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
+
 import {
   Breadcrumb,
   Layout,
@@ -17,9 +18,9 @@ import {
   Popconfirm,
 } from "antd";
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+// import { NavLink } from "react-router-dom";
+import Appdate from "./date";
 const { Search } = Input;
-
 const onSearch = (value) => console.log(value);
 const { Header, Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
@@ -51,7 +52,9 @@ const Duan = () => {
   const showModal = () => {
     setIsModalOpen(true);
   };
-
+  const hideModal = () => {
+    setIsModalOpen(false);
+  };
   const onMenuClick = ({ key }) => {
     console.log("kkkk item");
     if (key === "them_du_an") {
@@ -152,7 +155,7 @@ const Duan = () => {
               open={isModalOpen}
               footer={null}
               closeIcon={
-                <div>
+                <div onClick={hideModal}>
                   <CloseOutlined />
                 </div>
               }
@@ -175,6 +178,7 @@ const Duan = () => {
                   ]}
                 >
                   <Input placeholder="Tên dự án" />
+                  <Appdate/>
                 </Form.Item>
                 <Form.Item
                   style={{
@@ -182,13 +186,13 @@ const Duan = () => {
                     justifyContent: "flex-end",
                   }}
                 >
-                  <Button>Hủy</Button>
+                  <Button onClick={hideModal}>Hủy</Button>
                   <Button
                     type="primary"
                     htmlType="submit"
                     style={{ marginLeft: 12 }}
                   >
-                    {"Cập nhật"}
+                    {"Lưu"}
                   </Button>
                 </Form.Item>
               </Form>
