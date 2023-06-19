@@ -17,6 +17,7 @@ import {
   Table,
   Popconfirm,
   notification,
+  Select,
 } from "antd";
 import { useEffect, useRef, useState } from "react";
 import API from "../../utils/API";
@@ -24,6 +25,7 @@ import { useHistory } from "react-router-dom";
 import { resetObject } from "../../utils/Common";
 import Appdate from "./Appdate";
 import moment from "moment";
+const { Option } = Select;
 const { Search } = Input;
 const onSearch = (value) => console.log(value);
 const { Header, Content, Sider } = Layout;
@@ -55,8 +57,16 @@ const Duan = () => {
     console.log("kkkkk isModalOpen isEdit", isModalOpen, isEdit);
     if (isModalOpen && isEdit) {
       formRef.current?.setFieldsValue(duan);
+      formRef.current?.setFieldsValue({
+        ...duan,
+        TrangThai: `${duan.TrangThai}`,
+      });
     } else {
-      formRef.current?.setFieldsValue({ TenDuAn: "", MoTaDuAn: "", NgayBatDau: "", NgayKetThuc: "" });
+      formRef.current?.setFieldsValue({ TenDuAn: "", MoTaDuAn: "", NgayBatDau: "", NgayKetThuc: "", TrangThai: ""});
+      formRef.current?.setFieldsValue({
+        ...resetObject(duan),
+        TrangThai: "1",
+      });
     }
   }, [isModalOpen, isEdit]);
   const getData = async () => {
@@ -65,11 +75,16 @@ const Duan = () => {
       setDuans(rs);
     } else {
       notify.error({
-        message: `Load products failed!`,
+        message: `Load dự án failed!`,
         description: rs.status,
         placement: "topRight",
       });
     }
+  };
+  const proccessDuan = () => {
+    if (duan.TrangThai)
+    duan.TrangThai = duan.TrangThai ? parseInt(duan.TrangThai) : 1;
+    return duan;
   };
   const items = [
     getItem("Dự án", "du_an", <FileDoneOutlined />, [
@@ -106,6 +121,7 @@ const Duan = () => {
   };
   const onFinish = async () => {
     console.log("kkkkk duan", duan);
+    console.log("kkkkk proccessDuan", proccessDuan);
     // return;
     if (isEdit) {
       const rs = await API.put(`duan/${duan.MaDuAn}`, duan);
@@ -137,7 +153,11 @@ const Duan = () => {
   };
   const onChangeText = (key, e) => {
     console.log("kkkkk ", e.target.value);
-    setDuan({ ...duan, [key]: e.target.value });
+    if (["TrangThai"].includes(key)) {
+      setDuan({ ...duan, [key]: e });
+    } else {
+      setDuan({ ...duan, [key]: e.target.value });
+    }
   };
   // const onAdd = () => {
   //   setIsEdit(false);
@@ -192,6 +212,11 @@ const Duan = () => {
       title: "Ngày Kết Thúc",
       dataIndex: "NgayKetThuc",
       render: (val) => <span>{moment(val).format("YYYY-MM-DD")}</span>,
+    },
+    {
+      title: "Trạng Thái",
+      dataIndex: "TrangThai",
+      render: (val) => <span>{ val ===1 ? "Chưa hoàn thành" : val ===2 ? "Hoàn thành" : "Trễ"}</span>,
     },
     {
       title: "Action",
@@ -269,7 +294,7 @@ const Duan = () => {
             />
 
             <Modal
-              title={`${isEdit ? "Sửa" : "Add"} Dự án`}
+              title={`${isEdit ? "Sửa" : "Thêm"} Dự Án`}
               open={isModalOpen}
               footer={null}
               closeIcon={
@@ -307,6 +332,18 @@ const Duan = () => {
                     value={duan.MoTaDuAn}
                   />
                 </Form.Item>
+                <Form.Item className="TrangThai" label="Trạng Thái" name="TrangThai">
+            <Select
+              defaultValue={`${duan.TrangThai}` === "1" ? "1" :`${duan.TrangThai}` === "2" ? "2" : "0"}
+              onChange={(txt) => onChangeText("TrangThai", txt)}
+              style={{ width: "100%" }}
+              value={`${duan.TrangThai}` === "1" ? "Chưa Hoàn Thành" : `${duan.TrangThai}` === "2" ? "Đã Hoàn Thành" : "Trễ"}
+            >
+              <Option value="1">Đã Hoàn Thành</Option>
+              <Option value="2">Chưa Hoàn Thành</Option>
+              <Option value="0">Trễ</Option>
+            </Select>
+          </Form.Item>
                 <Form.Item label="Ngày Bắt Đầu & kết Thúc">
                   <Appdate finish={_onDatePickerFinish} />
                 </Form.Item>
