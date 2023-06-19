@@ -1,6 +1,7 @@
 import {
   FileDoneOutlined,
   FileAddOutlined,
+  PlusOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
 
@@ -17,7 +18,6 @@ import {
   Table,
   Popconfirm,
   notification,
-  Select,
 } from "antd";
 import { useEffect, useRef, useState } from "react";
 import API from "../../utils/API";
@@ -25,7 +25,6 @@ import { useHistory } from "react-router-dom";
 import { resetObject } from "../../utils/Common";
 import Appdate from "./Appdate";
 import moment from "moment";
-const { Option } = Select;
 const { Search } = Input;
 const onSearch = (value) => console.log(value);
 const { Header, Content, Sider } = Layout;
@@ -57,15 +56,12 @@ const Duan = () => {
     console.log("kkkkk isModalOpen isEdit", isModalOpen, isEdit);
     if (isModalOpen && isEdit) {
       formRef.current?.setFieldsValue(duan);
-      formRef.current?.setFieldsValue({
-        ...duan,
-        TrangThai: `${duan.TrangThai}`,
-      });
     } else {
-      formRef.current?.setFieldsValue({ TenDuAn: "", MoTaDuAn: "", NgayBatDau: "", NgayKetThuc: "", TrangThai: ""});
       formRef.current?.setFieldsValue({
-        ...resetObject(duan),
-        TrangThai: "1",
+        TenDuAn: "",
+        MoTaDuAn: "",
+        NgayBatDau: "",
+        NgayKetThuc: "",
       });
     }
   }, [isModalOpen, isEdit]);
@@ -75,22 +71,17 @@ const Duan = () => {
       setDuans(rs);
     } else {
       notify.error({
-        message: `Load dự án failed!`,
+        message: `Load projects failed!`,
         description: rs.status,
         placement: "topRight",
       });
     }
   };
-  const proccessDuan = () => {
-    if (duan.TrangThai)
-    duan.TrangThai = duan.TrangThai ? parseInt(duan.TrangThai) : 1;
-    return duan;
-  };
-  const items = [
-    getItem("Dự án", "du_an", <FileDoneOutlined />, [
-      getItem("Thêm dự án", "them_du_an", <FileAddOutlined />),
-    ]),
-  ];
+  // const items = [
+  //   getItem("Dự án", "du_an", <FileDoneOutlined />, [
+  //     getItem("Thêm dự án", "them_du_an", <FileAddOutlined />),
+  //   ]),
+  // ];
   const onCongviec = (MaDuAn) => {
     history.push(`/du-an/${MaDuAn}`);
   };
@@ -109,7 +100,7 @@ const Duan = () => {
         message: `Xóa dự án thành công!`,
         placement: "topRight",
       });
-  
+
       getData();
     } else {
       notify.error({
@@ -121,7 +112,6 @@ const Duan = () => {
   };
   const onFinish = async () => {
     console.log("kkkkk duan", duan);
-    console.log("kkkkk proccessDuan", proccessDuan);
     // return;
     if (isEdit) {
       const rs = await API.put(`duan/${duan.MaDuAn}`, duan);
@@ -153,16 +143,12 @@ const Duan = () => {
   };
   const onChangeText = (key, e) => {
     console.log("kkkkk ", e.target.value);
-    if (["TrangThai"].includes(key)) {
-      setDuan({ ...duan, [key]: e });
-    } else {
-      setDuan({ ...duan, [key]: e.target.value });
-    }
+    setDuan({ ...duan, [key]: e.target.value });
   };
-  // const onAdd = () => {
-  //   setIsEdit(false);
-  //   showModal();
-  // };
+  const onAdd = () => {
+    setIsEdit(false);
+    showModal();
+  };
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -192,7 +178,6 @@ const Duan = () => {
       NgayKetThuc: moment(dates[1]).format("YYYY-MM-DD"),
     });
   };
-  
 
   const COLUMNS = [
     {
@@ -214,21 +199,18 @@ const Duan = () => {
       render: (val) => <span>{moment(val).format("YYYY-MM-DD")}</span>,
     },
     {
-      title: "Trạng Thái",
-      dataIndex: "TrangThai",
-      render: (val) => <span>{ val ===1 ? "Chưa hoàn thành" : val ===2 ? "Hoàn thành" : "Trễ"}</span>,
-    },
-    {
       title: "Action",
       render: (_, duan) => (
         <Space>
           <a onClick={() => onCongviec(duan.MaDuAn)}>Công việc</a>
-          <a onClick={() => onEdit(duan.MaDuAn)}>Sửa</a>
+          <a style={{ marginLeft: 5 }} onClick={() => onEdit(duan.MaDuAn)}>
+            Sửa
+          </a>
           <Popconfirm
             title="Chắc chắn xóa?"
             onConfirm={() => onDelete(duan.MaDuAn)}
           >
-            <a className="text-danger">Xóa</a>
+            <a style={{ color: "red", marginLeft: 5 }}>Xóa</a>
           </Popconfirm>
         </Space>
       ),
@@ -236,139 +218,135 @@ const Duan = () => {
   ];
 
   return (
-    <Layout
-      style={{
-        minHeight: "100vh",
-      }}
-    >
-      <Sider
-        collapsible
-        theme="light"
-        collapsed={collapsed}
-        onCollapse={(value) => setCollapsed(value)}
-      >
-        <div className="demo-logo-vertical" />
-        <Search
-          placeholder="Tìm kiếm ở đây..."
-          onSearch={onSearch}
-          enterButton
-        />
+    // <Layout
+    //   style={{
+    //     minHeight: "100vh",
+    //   }}
+    // >
+    //   <Sider
+    //     collapsible
+    //     theme="light"
+    //     collapsed={collapsed}
+    //     onCollapse={(value) => setCollapsed(value)}
+    //   >
+    //     <div className="demo-logo-vertical" />
+    //     <Search
+    //       placeholder="Tìm kiếm ở đây..."
+    //       onSearch={onSearch}
+    //       enterButton
+    //     />
 
-        <Menu
-          theme="light"
-          defaultSelectedKeys={["1"]}
-          mode="inline"
-          items={items}
-          onClick={onMenuClick}
-        />
-      </Sider>
-      <Layout>
-        <Header
-          style={{
-            padding: 0,
-            background: colorBgContainer,
-            fontSize: 20,
-            fontStyle: Blob,
-          }}
+    //     <Menu
+    //       theme="light"
+    //       defaultSelectedKeys={["1"]}
+    //       mode="inline"
+    //       items={items}
+    //       onClick={onMenuClick}
+    //     />
+    //   </Sider>
+    //   <Layout>
+    //     <Header
+    //       style={{
+    //         padding: 0,
+    //         background: colorBgContainer,
+    //         fontSize: 20,
+    //         fontStyle: Blob,
+    //       }}
+    //     >
+    //       Dự án và công việc
+    //     </Header>
+    //     <Content
+    //       style={{
+    //         margin: "16px",
+    //       }}
+    //     >
+    //       <Breadcrumb style={{}}></Breadcrumb>
+    //       <div
+    //         style={{
+    //           padding: 24,
+    //           minHeight: 650,
+    //           background: colorBgContainer,
+    //         }}
+    //       >
+    <>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginTop: 5,
+        }}
+      >
+        <Button type="primary" icon={<PlusOutlined />} onClick={onAdd}>
+          Thêm
+        </Button>
+      </div>
+      <Table
+        dataSource={duans}
+        columns={COLUMNS}
+        rowKey="MaDuAn"
+        style={{ marginTop: 8 }}
+      />
+
+      <Modal
+        title={`${isEdit ? "Sửa" : "Add"} Dự án`}
+        open={isModalOpen}
+        footer={null}
+        closeIcon={
+          <div onClick={hideModal}>
+            <CloseOutlined />
+          </div>
+        }
+      >
+        <Form
+          onFinish={onFinish}
+          layout="vertical"
+          className="row-col"
+          style={{ marginTop: 12 }}
         >
-          Dự án
-        </Header>
-        <Content
-          style={{
-            margin: "16px",
-          }}
-        >
-          <Breadcrumb style={{}}></Breadcrumb>
-          <div
+          <Form.Item
+            label="Tên dự án"
+            name="TenDuAn"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập tên dự án!",
+              },
+            ]}
+          >
+            <Input
+              placeholder="Tên Dự Án"
+              onChange={(txt) => onChangeText("TenDuAn", txt)}
+              value={duan.TenDuAn}
+            />
+          </Form.Item>
+          <Form.Item label="Mô Tả" name="MoTaDuAn">
+            <Input
+              placeholder="Mô Tả"
+              onChange={(txt) => onChangeText("MoTaDuAn", txt)}
+              value={duan.MoTaDuAn}
+            />
+          </Form.Item>
+          <Form.Item label="Ngày Bắt Đầu & kết Thúc">
+            <Appdate finish={_onDatePickerFinish} />
+          </Form.Item>
+          <Form.Item
             style={{
-              padding: 24,
-              minHeight: 650,
-              background: colorBgContainer,
+              display: "flex",
+              justifyContent: "flex-end",
             }}
           >
-            <Table
-              dataSource={duans}
-              columns={COLUMNS}
-              rowKey="MaDuAn"
-              style={{ marginTop: 8 }}
-            />
-
-            <Modal
-              title={`${isEdit ? "Sửa" : "Thêm"} Dự Án`}
-              open={isModalOpen}
-              footer={null}
-              closeIcon={
-                <div onClick={hideModal}>
-                  <CloseOutlined />
-                </div>
-              }
-            >
-              <Form
-                onFinish={onFinish}
-                layout="vertical"
-                className="row-col"
-                style={{ marginTop: 12 }}
-              >
-                <Form.Item
-                  label="Tên dự án"
-                  name="TenDuAn"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập tên dự án!",
-                    },
-                  ]}
-                >
-                  <Input
-                    placeholder="Tên Dự Án"
-                    onChange={(txt) => onChangeText("TenDuAn", txt)}
-                    value={duan.TenDuAn}
-                  />
-                </Form.Item>
-                <Form.Item label="Mô Tả" name="MoTaDuAn">
-                  <Input
-                    placeholder="Mô Tả"
-                    onChange={(txt) => onChangeText("MoTaDuAn", txt)}
-                    value={duan.MoTaDuAn}
-                  />
-                </Form.Item>
-                <Form.Item className="TrangThai" label="Trạng Thái" name="TrangThai">
-            <Select
-              defaultValue={`${duan.TrangThai}` === "1" ? "1" :`${duan.TrangThai}` === "2" ? "2" : "0"}
-              onChange={(txt) => onChangeText("TrangThai", txt)}
-              style={{ width: "100%" }}
-              value={`${duan.TrangThai}` === "1" ? "Chưa Hoàn Thành" : `${duan.TrangThai}` === "2" ? "Đã Hoàn Thành" : "Trễ"}
-            >
-              <Option value="1">Đã Hoàn Thành</Option>
-              <Option value="2">Chưa Hoàn Thành</Option>
-              <Option value="0">Trễ</Option>
-            </Select>
+            <Button onClick={hideModal}>Hủy</Button>
+            <Button type="primary" htmlType="submit" style={{ marginLeft: 12 }}>
+              {isEdit ? "Sửa" : "Lưu"}
+            </Button>
           </Form.Item>
-                <Form.Item label="Ngày Bắt Đầu & kết Thúc">
-                  <Appdate finish={_onDatePickerFinish} />
-                </Form.Item>
-                <Form.Item
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                  }}
-                >
-                  <Button onClick={hideModal}>Hủy</Button>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    style={{ marginLeft: 12 }}
-                  >
-                    {isEdit ? "Sửa" : "Lưu"}
-                  </Button>
-                </Form.Item>
-              </Form>
-            </Modal>
-            {contextHolder}
-          </div>
-        </Content>
-      </Layout>
-    </Layout>
+        </Form>
+      </Modal>
+      {contextHolder}
+    </>
+    // </Content>
+    // </Layout>
+    // </Layout>
   );
 };
 export default Duan;
