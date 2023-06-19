@@ -15,12 +15,14 @@ import {
   Form,
   Input,
   Table,
+  Select,
   Popconfirm,
   notification,
 } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 const { Search } = Input;
+const { Option } = Select;
 // import Appdate from "./Appdate";
 // import moment from "moment";
 // import API from "../../utils/API";
@@ -148,8 +150,12 @@ const CongViec = () => {
   //   }
   // };
   const onChangeText = (key, e) => {
-    console.log("kkkkk ", e.target.value);
-    setCongviec({ ...congviec, [key]: e.target.value });
+    console.log("kkkkk ", e?.target?.value ?? e);
+    if (["TrangThai"].includes(key)) {
+      setCongviec({ ...congviec, [key]: e });
+    } else {
+      setCongviec({ ...congviec, [key]: e.target.value });
+    }
   };
 
   // const _onDatePickerFinish = (dates) => {
@@ -324,11 +330,19 @@ const CongViec = () => {
             />
           </Form.Item>
           <Form.Item label="Trạng Thái" name="TrangThai">
-            <Input
-              placeholder="Trạng Thái"
+            <Select
+              defaultValue={`${congviec.TrangThai}` === "1" ? "1" : "0"}
               onChange={(txt) => onChangeText("TrangThai", txt)}
-              value={congviec.TrangThai}
-            />
+              style={{ width: "100%" }}
+              value={
+                `${congviec.TrangThai}` === "1"
+                  ? "Hoàn thành"
+                  : "Chưa hoàn thành"
+              }
+            >
+              <Option value="1">Hoàn thành</Option>
+              <Option value="0">Chưa hoàn thành</Option>
+            </Select>
           </Form.Item>
           <Form.Item label="Ưu Tiên" name="UuTien">
             <Input

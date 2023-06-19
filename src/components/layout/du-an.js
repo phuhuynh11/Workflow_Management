@@ -16,6 +16,7 @@ import {
   Form,
   Input,
   Table,
+  Select,
   Popconfirm,
   notification,
 } from "antd";
@@ -26,6 +27,7 @@ import { resetObject } from "../../utils/Common";
 import Appdate from "./Appdate";
 import moment from "moment";
 const { Search } = Input;
+const { Option } = Select;
 const onSearch = (value) => console.log(value);
 const { Header, Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
@@ -71,7 +73,7 @@ const Duan = () => {
       setDuans(rs);
     } else {
       notify.error({
-        message: `Load projects failed!`,
+        message: `Không có dự án!`,
         description: rs.status,
         placement: "topRight",
       });
@@ -141,10 +143,20 @@ const Duan = () => {
       }
     }
   };
+  // const onChangeText = (key, e) => {
+  //   console.log("kkkkk ", e.target.value);
+  //   setDuan({ ...duan, [key]: e.target.value });
+  // };
+
   const onChangeText = (key, e) => {
-    console.log("kkkkk ", e.target.value);
-    setDuan({ ...duan, [key]: e.target.value });
+    console.log("kkkkk ", e?.target?.value ?? e);
+    if (["TrangThai"].includes(key)) {
+      setDuan({ ...duan, [key]: e });
+    } else {
+      setDuan({ ...duan, [key]: e.target.value });
+    }
   };
+
   const onAdd = () => {
     setIsEdit(false);
     showModal();
@@ -187,6 +199,13 @@ const Duan = () => {
     {
       title: "Mô Tả",
       dataIndex: "MoTaDuAn",
+    },
+    {
+      title: "Trạng Thái",
+      dataIndex: "TrangThai",
+      render: (val) => (
+        <span>{val === 1 ? "Hoàn thành" : "Chưa hoàn thành"}</span>
+      ),
     },
     {
       title: "Ngày Bắt Đầu",
@@ -325,6 +344,19 @@ const Duan = () => {
               onChange={(txt) => onChangeText("MoTaDuAn", txt)}
               value={duan.MoTaDuAn}
             />
+          </Form.Item>
+          <Form.Item label="Trạng Thái" name="TrangThai">
+            <Select
+              defaultValue={`${duan.TrangThai}` === "1" ? "1" : "0"}
+              onChange={(txt) => onChangeText("TrangThai", txt)}
+              style={{ width: "100%" }}
+              value={
+                `${duan.TrangThai}` === "1" ? "Hoàn thành" : "Chưa hoàn thành"
+              }
+            >
+              <Option value="1">Hoàn thành</Option>
+              <Option value="0">Chưa hoàn thành</Option>
+            </Select>
           </Form.Item>
           <Form.Item label="Ngày Bắt Đầu & kết Thúc">
             <Appdate finish={_onDatePickerFinish} />
