@@ -153,7 +153,7 @@ const Duan = () => {
     if (["TrangThai"].includes(key)) {
       setDuan({ ...duan, [key]: e });
     } else {
-      setDuan({ ...duan, [key]: e.target.value });
+      setDuan({ ...duan, [key]: e.target.value || e });
     }
   };
 
@@ -204,7 +204,7 @@ const Duan = () => {
       title: "Trạng Thái",
       dataIndex: "TrangThai",
       render: (val) => (
-        <span>{val === 1 ? "Hoàn thành" : "Chưa hoàn thành"}</span>
+        <span>{val === 1 ? "Hoàn thành" : val === 2 ? "Trễ" : "Chưa hoàn thành"}</span>
       ),
     },
     {
@@ -347,15 +347,16 @@ const Duan = () => {
           </Form.Item>
           <Form.Item label="Trạng Thái" name="TrangThai">
             <Select
-              defaultValue={`${duan.TrangThai}` === "1" ? "1" : "0"}
+              defaultValue={`${duan.TrangThai}` === "1" ? "1" :`${duan.TrangThai}` === "2" ? "2" : "3"}
               onChange={(txt) => onChangeText("TrangThai", txt)}
               style={{ width: "100%" }}
               value={
-                `${duan.TrangThai}` === "1" ? "Hoàn thành" : "Chưa hoàn thành"
+                `${duan.TrangThai}` === "1" ? "Hoàn thành" :`${duan.TrangThai}` === "2" ? "Trễ" : "Chưa hoàn thành"
               }
             >
               <Option value="1">Hoàn thành</Option>
-              <Option value="0">Chưa hoàn thành</Option>
+              <Option value="2">Trễ</Option>
+              <Option value="3">Chưa hoàn thành</Option>
             </Select>
           </Form.Item>
           <Form.Item label="Ngày Bắt Đầu & kết Thúc">
