@@ -19,13 +19,13 @@ import {
   Popconfirm,
   notification,
 } from "antd";
+import API from "../../utils/API";
 import { useEffect, useRef, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 const { Search } = Input;
 const { Option } = Select;
 // import Appdate from "./Appdate";
 // import moment from "moment";
-// import API from "../../utils/API";
 const onSearch = (value) => console.log(value);
 const { Header, Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
@@ -38,6 +38,8 @@ function getItem(label, key, icon, children) {
 }
 
 const CongViec = () => {
+  const { id } = useParams();
+  console.log(id);
   const formRef = useRef(null);
   const [collapsed, setCollapsed] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -51,7 +53,7 @@ const CongViec = () => {
   const history = useHistory();
   const [notify, contextHolder] = notification.useNotification();
   useEffect(() => {
-    // getData();
+    getData();
   }, []);
   useEffect(() => {
     console.log("kkkkk isModalOpen isEdit", isModalOpen, isEdit);
@@ -68,18 +70,19 @@ const CongViec = () => {
       });
     }
   }, [isModalOpen, isEdit]);
-  // const getData = async () => {
-  //   const rs = await API.get("congviec");
-  //   if (rs && rs.length > 0) {
-  //     setCongviecs(rs);
-  //   } else {
-  //     notify.error({
-  //       message: `Load products failed!`,
-  //       description: rs.status,
-  //       placement: "topRight",
-  //     });
-  //   }
-  // };
+  const getData = async (MaDuAn) => {
+    const rs = await API.get(`congviecbyduan/${id}`);
+    console.log("kkkk", rs);
+    if (rs && rs.length > 0) {
+      setCongviecs(rs);
+    } else {
+      notify.error({
+        message: `Load products failed!`,
+        description: rs.status,
+        placement: "topRight",
+      });
+    }
+  };
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -186,6 +189,11 @@ const CongViec = () => {
     {
       title: "Trạng Thái",
       dataIndex: "TrangThai",
+      render: (val) => (
+        <span>
+          {val === 1 ? "Hoàn thành" : val === 2 ? "Trễ" : "Chưa hoàn thành"}
+        </span>
+      ),
     },
     {
       title: "Ưu Tiên",
@@ -331,17 +339,26 @@ const CongViec = () => {
           </Form.Item>
           <Form.Item label="Trạng Thái" name="TrangThai">
             <Select
-              defaultValue={`${congviec.TrangThai}` === "1" ? "1" : "0"}
+              defaultValue={
+                `${congviec.TrangThai}` === "1"
+                  ? "1"
+                  : `${congviec.TrangThai}` === "2"
+                  ? "2"
+                  : "3"
+              }
               onChange={(txt) => onChangeText("TrangThai", txt)}
               style={{ width: "100%" }}
               value={
                 `${congviec.TrangThai}` === "1"
                   ? "Hoàn thành"
+                  : `${congviec.TrangThai}` === "2"
+                  ? "Trễ"
                   : "Chưa hoàn thành"
               }
             >
               <Option value="1">Hoàn thành</Option>
-              <Option value="0">Chưa hoàn thành</Option>
+              <Option value="2">Trễ</Option>
+              <Option value="3">Chưa hoàn thành</Option>
             </Select>
           </Form.Item>
           <Form.Item label="Ưu Tiên" name="UuTien">
