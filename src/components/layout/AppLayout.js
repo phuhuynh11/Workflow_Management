@@ -20,7 +20,13 @@ function getItem(label, key, icon, children) {
 }
 
 const items = [
-  getItem("Xem thống kê báo cáo", "1", <PieChartOutlined />),
+  getItem(
+    "Xem thống kê báo cáo",
+    "1",
+    <NavLink to="/Dashboard">
+      <PieChartOutlined />
+    </NavLink>
+  ),
   getItem(
     "Dự án",
     "sub1",
