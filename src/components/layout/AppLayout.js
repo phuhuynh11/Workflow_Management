@@ -118,7 +118,7 @@ const AppLayout = (props) => {
             background: colorBgContainer,
           }}
         >
-          <div style={{ marginLeft: 1200, fontSize: 18 }}>
+          <div style={{ marginLeft: "86%", fontSize: 18 }}>
             {/* <a columns={COLUMNS}/> */}
             <Button
               type="primary"

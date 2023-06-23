@@ -22,7 +22,8 @@ import {
 import API from "../../utils/API";
 import { useEffect, useRef, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-const { Search } = Input;
+import UserStore from "../../stores/UserStore";
+const { TextArea } = Input;
 const { Option } = Select;
 // import Appdate from "./Appdate";
 // import moment from "moment";
@@ -37,7 +38,7 @@ function getItem(label, key, icon, children) {
   };
 }
 
-const CongViec = () => {
+const ChiTietCongViec = () => {
   const { id } = useParams();
   // console.log(id);
   const formRef = useRef(null);
@@ -64,23 +65,21 @@ const CongViec = () => {
     } else {
       formRef.current?.setFieldsValue({
         TenCongViec: "",
-        MoTaCongViec: "",
+        TenTaiLieuCV: "",
+        Ten: "",
         TrangThai: "",
-        UuTien: "",
-        NgayBatDau: "",
-        NgayKetThuc: "",
       });
     }
   }, [isModalOpen, isEdit]);
   const getData = async () => {
-    const rs = await API.get(`congviecbyduan/${id}`);
+    const rs = await API.get(`congviec/${id}`);
     console.log("kkkk", rs);
     // return;
     if (rs && rs.length > 0) {
       setCongviecs(rs);
     } else {
       notify.error({
-        message: `Không Có Công Việc`,
+        message: `Không Có Chi Tiết Công Việc`,
         description: rs.status,
         placement: "topRight",
       });
@@ -99,31 +98,35 @@ const CongViec = () => {
     showModal();
   };
 
+  // const onChiTietCongviec = (MaCongViec) => {
+  //   history.push(`/cong-viec/${MaCongViec}`);
+  // };
+
   const onEdit = (MaCongViec) => {
-    const _congviec = congviecs.find((k) => k.MaCongViec === MaCongViec);
+    const _chitietcv = congviecs.find((k) => k.MaCongViec === MaCongViec);
     setIsModalOpen(true);
     setIsEdit(true);
-    setCongviec({ ..._congviec });
-    console.log("kkkkk _congviec", _congviec);
+    setCongviec({ ..._chitietcv });
+    console.log("kkkkk _chitietcv", _chitietcv);
   };
-  const onDelete = async (MaCongViec) => {
-    const rs = await API.delete(`congviec/${MaCongViec}`);
-    console.log("kkkkk delete congviec", rs);
-    if (rs) {
-      notify.success({
-        message: `Xóa dự án thành công!`,
-        placement: "topRight",
-      });
+  //   const onDelete = async (MaCongViec) => {
+  //     const rs = await API.delete(`congviec/${MaCongViec}`);
+  //     console.log("kkkkk delete congviec", rs);
+  //     if (rs) {
+  //       notify.success({
+  //         message: `Xóa chi tiết công việc thành công!`,
+  //         placement: "topRight",
+  //       });
 
-      getData();
-    } else {
-      notify.error({
-        message: `Lỗi xóa dự án!`,
-        description: rs.status,
-        placement: "topRight",
-      });
-    }
-  };
+  //       getData();
+  //     } else {
+  //       notify.error({
+  //         message: `Lỗi xóa chi tiết công việc!`,
+  //         description: rs.status,
+  //         placement: "topRight",
+  //       });
+  //     }
+  //   };
   const onFinish = async () => {
     console.log("kkkkk congviec", congviec);
     // return;
@@ -136,7 +139,7 @@ const CongViec = () => {
         getData();
       } else {
         notify.error({
-          message: `Lỗi sửa dự án!`,
+          message: `Lỗi sửa chi tiết công việc!`,
           description: rs.status,
           placement: "topRight",
         });
@@ -150,7 +153,7 @@ const CongViec = () => {
         getData();
       } else {
         notify.error({
-          message: `Lỗi thêm dự án!`,
+          message: `Lỗi thêm chi tiết công việc!`,
           description: rs.status,
           placement: "topRight",
         });
@@ -166,9 +169,6 @@ const CongViec = () => {
     }
   };
 
-  const onChiTietCongviec = (MaCongViec) => {
-    history.push(`/cong-viec/${MaCongViec}`);
-  };
   // const _onDatePickerFinish = (dates) => {
   //   console.log("kkkkk _onDatePickerFinish start", dates[0]);
   //   console.log("kkkkk _onDatePickerFinish end", dates[1]);
@@ -191,8 +191,12 @@ const CongViec = () => {
       dataIndex: "TenCongViec",
     },
     {
-      title: "Mô Tả",
-      dataIndex: "MoTaCongViec",
+      title: "Tài Liệu",
+      dataIndex: "TenTaiLieuCV",
+    },
+    {
+      title: "Người Thực Hiện",
+      dataIndex: "Ten",
     },
     {
       title: "Trạng Thái",
@@ -203,42 +207,38 @@ const CongViec = () => {
         </span>
       ),
     },
-    {
-      title: "Ưu Tiên",
-      dataIndex: "UuTien",
-    },
-    {
-      title: "Ngày Bắt Đầu",
-      dataIndex: "NgayBatDau",
-      // render: (val) => <span>{moment(val).format("YYYY-MM-DD")}</span>,
-    },
-    {
-      title: "Ngày Kết Thúc",
-      dataIndex: "NgayKetThuc",
-      // render: (val) => <span>{moment(val).format("YYYY-MM-DD")}</span>,
-    },
-    {
-      title: "Action",
-      render: (_, congviec) => (
-        <Space>
-          <a onClick={() => onChiTietCongviec(congviec.MaCongViec)}>
-            Chi tiết công việc
-          </a>
-          <a
-            style={{ marginLeft: 5 }}
-            onClick={() => onEdit(congviec.MaCongViec)}
-          >
-            Sửa
-          </a>
-          <Popconfirm
-            title="Chắc chắn xóa?"
-            onConfirm={() => onDelete(congviec.MaCongViec)}
-          >
-            <a style={{ color: "red", marginLeft: 5 }}>Xóa</a>
-          </Popconfirm>
-        </Space>
-      ),
-    },
+    // {
+    //   title: "Ngày Bắt Đầu",
+    //   dataIndex: "NgayBatDau",
+    //   render: (val) => <span>{moment(val).format("YYYY-MM-DD")}</span>,
+    // },
+    // {
+    //   title: "Ngày Kết Thúc",
+    //   dataIndex: "NgayKetThuc",
+    //   render: (val) => <span>{moment(val).format("YYYY-MM-DD")}</span>,
+    // },
+    // {
+    //   title: "Action",
+    //   render: (_, congviec) => (
+    //     <Space>
+    //       {/* <a onClick={() => onChiTietCongviec(congviec.MaCongViec)}>
+    //           Chi tiết công việc
+    //         </a> */}
+    //       <a
+    //         style={{ marginLeft: 5 }}
+    //         onClick={() => onEdit(congviec.MaCongViec)}
+    //       >
+    //         Sửa
+    //       </a>
+    //       <Popconfirm
+    //         title="Chắc chắn xóa?"
+    //         onConfirm={() => onDelete(congviec.MaCongViec)}
+    //       >
+    //         <a style={{ color: "red", marginLeft: 5 }}>Xóa</a>
+    //       </Popconfirm>
+    //     </Space>
+    //   ),
+    // },
   ];
 
   return (
@@ -250,9 +250,11 @@ const CongViec = () => {
           marginTop: 5,
         }}
       >
-        <Button type="primary" icon={<PlusOutlined />} onClick={onAdd}>
-          Thêm
-        </Button>
+        {UserStore.userInfo?.quyen !== "Admin" ? (
+          <Button type="primary" icon={<PlusOutlined />} onClick={onEdit}>
+            Phân công công việc
+          </Button>
+        ) : null}
       </div>
       <Table
         dataSource={congviecs}
@@ -262,7 +264,8 @@ const CongViec = () => {
       />
 
       <Modal
-        title={`${isEdit ? "Sửa" : "Add"} Công Việc`}
+        // title={`${isEdit ? "Sửa" : "Add"} Công Việc`}
+        title={"Phân Công Công Việc"}
         open={isModalOpen}
         footer={null}
         closeIcon={
@@ -280,12 +283,12 @@ const CongViec = () => {
           <Form.Item
             label="Tên công việc"
             name="TenCongViec"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập tên công việc!",
-              },
-            ]}
+            // rules={[
+            //   {
+            //     required: true,
+            //     message: "Vui lòng nhập tên công việc!",
+            //   },
+            // ]}
           >
             <Input
               placeholder="Tên Công Việc"
@@ -293,47 +296,69 @@ const CongViec = () => {
               value={congviec.TenCongViec}
             />
           </Form.Item>
-          <Form.Item label="Mô Tả" name="MoTaCongViec">
-            <Input
-              placeholder="Mô Tả"
-              onChange={(txt) => onChangeText("MoTaCongViec", txt)}
-              value={congviec.MoTaCongViec}
-            />
-          </Form.Item>
-          <Form.Item label="Trạng Thái" name="TrangThai">
+          <Form.Item label="Tài Liệu" name="TenTaiLieu">
             <Select
-              defaultValue={
-                `${congviec.TrangThai}` === "1"
-                  ? "1"
-                  : `${congviec.TrangThai}` === "2"
-                  ? "2"
-                  : "3"
-              }
-              onChange={(txt) => onChangeText("TrangThai", txt)}
+              onChange={(txt) => onChangeText("TenTaiLieu", txt)}
               style={{ width: "100%" }}
-              value={
-                `${congviec.TrangThai}` === "1"
-                  ? "Hoàn thành"
-                  : `${congviec.TrangThai}` === "2"
-                  ? "Trễ"
-                  : "Chưa hoàn thành"
-              }
             >
-              <Option value="1">Hoàn thành</Option>
-              <Option value="2">Trễ</Option>
-              <Option value="3">Chưa hoàn thành</Option>
+              {/* {TenTaiLieu.map((b) => {
+                return (
+                  <Option key={b.id} value={b.id}>
+                    {b.name}
+                  </Option>
+                );
+              })} */}
             </Select>
           </Form.Item>
-          <Form.Item label="Ưu Tiên" name="UuTien">
-            <Input
-              placeholder="Ưu Tiên"
-              onChange={(txt) => onChangeText("UuTien", txt)}
-              value={congviec.UuTien}
-            />
+          <Form.Item label="Người Thực Hiện" name="Ten">
+            <Select
+              mode="multiple"
+              onChange={(txt) => onChangeText("Ten", txt)}
+              style={{ width: "100%" }}
+            >
+              {/* {Ten.map((b) => {
+                return (
+                  <Option key={b.id} value={b.id}>
+                    {b.name}
+                  </Option>
+                );
+              })} */}
+            </Select>
           </Form.Item>
-          <Form.Item label="Ngày Bắt Đầu & kết Thúc">
-            {/* <Appdate finish={_onDatePickerFinish} /> */}
-          </Form.Item>
+          {/* <Form.Item label="Trạng Thái" name="TrangThai">
+              <Select
+                defaultValue={
+                  `${congviec.TrangThai}` === "1"
+                    ? "1"
+                    : `${congviec.TrangThai}` === "2"
+                    ? "2"
+                    : "3"
+                }
+                onChange={(txt) => onChangeText("TrangThai", txt)}
+                style={{ width: "100%" }}
+                value={
+                  `${congviec.TrangThai}` === "1"
+                    ? "Hoàn thành"
+                    : `${congviec.TrangThai}` === "2"
+                    ? "Trễ"
+                    : "Chưa hoàn thành"
+                }
+              >
+                <Option value="1">Hoàn thành</Option>
+                <Option value="2">Trễ</Option>
+                <Option value="3">Chưa hoàn thành</Option>
+              </Select>
+            </Form.Item> */}
+          {/* <Form.Item label="Ưu Tiên" name="UuTien">
+              <Input
+                placeholder="Ưu Tiên"
+                onChange={(txt) => onChangeText("UuTien", txt)}
+                value={congviec.UuTien}
+              />
+            </Form.Item>
+            <Form.Item label="Ngày Bắt Đầu & kết Thúc">
+              <Appdate finish={_onDatePickerFinish} />
+            </Form.Item> */}
           <Form.Item
             style={{
               display: "flex",
@@ -354,4 +379,4 @@ const CongViec = () => {
     //   </Layout>
   );
 };
-export default CongViec;
+export default ChiTietCongViec;
