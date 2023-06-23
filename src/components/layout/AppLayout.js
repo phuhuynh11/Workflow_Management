@@ -4,13 +4,26 @@ import {
   CloudOutlined,
   MailOutlined,
   DesktopOutlined,
+  AudioOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Layout, Menu, theme, Button } from "antd";
+import { Breadcrumb, Layout, Menu, theme, Button, Input, Space } from "antd";
 import { useState, useEffect } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import { PoweroffOutlined } from "@ant-design/icons";
 import API from "../../utils/API";
+const { Search } = Input;
 const { Header, Content, Sider } = Layout;
+
+const suffix = (
+  <AudioOutlined
+    style={{
+      fontSize: 16,
+      color: "#1677ff",
+    }}
+  />
+);
+
+const onSearch = (value) => console.log(value);
 
 function getItem(label, key, icon, children) {
   return {
@@ -118,14 +131,22 @@ const AppLayout = (props) => {
             background: colorBgContainer,
           }}
         >
-          <div style={{ marginLeft: "86%", fontSize: 18 }}>
+          <div style={{ marginLeft: "67%", fontSize: 18 }}>
             {/* <a columns={COLUMNS}/> */}
+            <Space direction="vertical">
+              <Search
+                style={{ marginTop: 17 }}
+                placeholder="input search text"
+                onSearch={onSearch}
+                enterButton
+              />
+            </Space>
             <Button
               type="primary"
               icon={<PoweroffOutlined />}
               loading={loadings[1]}
               onClick={() => enterLoading(1)}
-              style={{ marginLeft: 8 }}
+              style={{ marginLeft: 5 }}
               href="/"
             >
               Đăng Xuất!
