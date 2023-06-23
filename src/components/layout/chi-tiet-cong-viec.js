@@ -201,11 +201,11 @@ const ChiTietCongViec = () => {
     {
       title: "Trạng Thái",
       dataIndex: "TrangThai",
-      render: (val) => (
-        <span>
-          {val === 1 ? "Hoàn thành" : val === 2 ? "Trễ" : "Chưa hoàn thành"}
-        </span>
-      ),
+      //   render: (val) => (
+      //     <span>
+      //       {val === 1 ? "Hoàn thành" : val === 2 ? "Trễ" : "Chưa hoàn thành"}
+      //     </span>
+      //   ),
     },
     // {
     //   title: "Ngày Bắt Đầu",
@@ -250,7 +250,7 @@ const ChiTietCongViec = () => {
           marginTop: 5,
         }}
       >
-        {UserStore.userInfo?.quyen !== "Admin" ? (
+        {UserStore.userInfo?.quyen === "Admin" ? (
           <Button type="primary" icon={<PlusOutlined />} onClick={onEdit}>
             Phân công công việc
           </Button>
