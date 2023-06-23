@@ -7,10 +7,7 @@ import Dashboard from "./components/layout/Dashboard";
 import Login from "./components/layout/Login"
 import Resetpassword from "./components/layout/Resetpassword"
 import Forgotpassword from "./components/layout/Forgotpassword"
-// import Login from './pages/Login';
-// import Resetpassword from './pages/Resetpassword';
-// import Forgotpassword from './pages/Forgotpassword';
-// import MainLayout from './components/MainLayout';
+import User from "./components/layout/ThanhVien";
 function App() {
   return (
     <div className="App">
@@ -42,6 +39,15 @@ function App() {
           component={() => (
             <AppLayout>
               <CongViec />
+            </AppLayout>
+          )}
+        />
+        <Route
+          exact
+          path="/User"
+          component={() => (
+            <AppLayout>
+              <User/>
             </AppLayout>
           )}
         />

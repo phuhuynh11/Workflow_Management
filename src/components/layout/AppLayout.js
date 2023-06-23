@@ -5,11 +5,13 @@ import {
   MailOutlined,
   DesktopOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Layout, Menu, theme } from "antd";
+import { Breadcrumb, Layout, Menu, theme, Button } from "antd";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { PoweroffOutlined } from "@ant-design/icons";
 import Duan from "./du-an";
 const { Header, Content, Sider } = Layout;
+
 function getItem(label, key, icon, children) {
   return {
     key,
@@ -42,11 +44,32 @@ const items = [
     getItem("Thùng Rác", "6"),
   ]),
   getItem("Tin Nhắn", "", <MailOutlined />),
-  getItem("Thành Viên", "3", <TeamOutlined />),
+  getItem(
+    "Thành Viên",
+    "7",
+    <NavLink to="/User">
+      <TeamOutlined />
+    </NavLink>
+  ),
 ];
 const AppLayout = (props) => {
   console.log("kkkk", props);
   const [collapsed, setCollapsed] = useState(false);
+  const [loadings, setLoadings] = useState([]);
+  const enterLoading = (index) => {
+    setLoadings((prevLoadings) => {
+      const newLoadings = [...prevLoadings];
+      newLoadings[index] = true;
+      return newLoadings;
+    });
+    setTimeout(() => {
+      setLoadings((prevLoadings) => {
+        const newLoadings = [...prevLoadings];
+        newLoadings[index] = false;
+        return newLoadings;
+      });
+    }, 400);
+  };
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -79,24 +102,26 @@ const AppLayout = (props) => {
             padding: 0,
             background: colorBgContainer,
           }}
-        />
-        <Content
-          style={{
-            margin: "0 16px",
-          }}
         >
-          <Breadcrumb
-            style={{
-              margin: "16px 0",
-            }}
-          >
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
-          </Breadcrumb>
+          <div style={{ marginLeft: 1200, fontSize: 18 }}>
+            <a style={{ color: "black" }}>Huỳnh Ngọc Phú</a>
+            <Button
+              type="primary"
+              icon={<PoweroffOutlined />}
+              loading={loadings[1]}
+              onClick={() => enterLoading(1)}
+              style={{ marginLeft: 8 }}
+              href="/"
+            >
+              Đăng Xuất!
+            </Button>
+          </div>
+        </Header>
+        <Content>
           <div
             style={{
               padding: 24,
-              minHeight: 360,
+              minHeight: 800,
               background: colorBgContainer,
             }}
           >

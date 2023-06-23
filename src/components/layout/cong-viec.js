@@ -39,13 +39,15 @@ function getItem(label, key, icon, children) {
 
 const CongViec = () => {
   const { id } = useParams();
-  console.log(id);
+  // console.log(id);
   const formRef = useRef(null);
   const [collapsed, setCollapsed] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [congviecs, setCongviecs] = useState([]);
   const [congviec, setCongviec] = useState({});
+  // const [congviecbyduan, setCongviecbyduan] = useState({});
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -70,14 +72,15 @@ const CongViec = () => {
       });
     }
   }, [isModalOpen, isEdit]);
-  const getData = async (MaDuAn) => {
-    const rs = await API.get(`congviecbyduan/${id}`);
+  const getData = async () => {
+    const rs = await API.get("congviec");
     console.log("kkkk", rs);
+    // return;
     if (rs && rs.length > 0) {
       setCongviecs(rs);
     } else {
       notify.error({
-        message: `Load products failed!`,
+        message: `Không Có Công Việc`,
         description: rs.status,
         placement: "topRight",
       });
@@ -103,55 +106,57 @@ const CongViec = () => {
     setCongviec({ ..._congviec });
     console.log("kkkkk _congviec", _congviec);
   };
-  // const onDelete = async (MaCongViec) => {
-  //   const rs = await API.delete(`congviec/${MaCongViec}`);
-  //   console.log("kkkkk delete congviec", rs);
-  //   if (rs) {
-  //     notify.success({
-  //       message: `Xóa dự án thành công!`,
-  //       placement: "topRight",
-  //     });
+  const onDelete = async (MaCongViec) => {
+    const rs = await API.delete(`congviec/${MaCongViec}`);
+    console.log("kkkkk delete congviec", rs);
+    if (rs) {
+      notify.success({
+        message: `Xóa dự án thành công!`,
+        placement: "topRight",
+      });
 
-  //     getData();
-  //   } else {
-  //     notify.error({
-  //       message: `Lỗi xóa dự án!`,
-  //       description: rs.status,
-  //       placement: "topRight",
-  //     });
-  //   }
-  // };
-  // const onFinish = async () => {
-  //   console.log("kkkkk congviec", congviec);
-  //   // return;
-  //   if (isEdit) {
-  //     const rs = await API.put(`congviec/${congviec.MaCongViec}`, congviec);
-  //     console.log("kkkkk update congviec", rs);
-  //     if (rs) {
-  //       setIsModalOpen(false);
-  //       getData();
-  //     } else {
-  //       notify.error({
-  //         message: `Lỗi sửa dự án!`,
-  //         description: rs.status,
-  //         placement: "topRight",
-  //       });
-  //     }
-  //   } else {
-  //     const rs = await API.post("congviec", congviec);
-  //     console.log("kkkkk add congviec", rs);
-  //     if (rs) {
-  //       setIsModalOpen(false);
-  //       getData();
-  //     } else {
-  //       notify.error({
-  //         message: `Lỗi thêm dự án!`,
-  //         description: rs.status,
-  //         placement: "topRight",
-  //       });
-  //     }
-  //   }
-  // };
+      getData();
+    } else {
+      notify.error({
+        message: `Lỗi xóa dự án!`,
+        description: rs.status,
+        placement: "topRight",
+      });
+    }
+  };
+  const onFinish = async () => {
+    console.log("kkkkk congviec", congviec);
+    // return;
+    if (isEdit) {
+      const rs = await API.put(`congviec/${congviec.MaCongViec}`, congviec);
+      console.log("kkkkk update congviec", rs);
+      // return;
+      if (rs) {
+        setIsModalOpen(false);
+        getData();
+      } else {
+        notify.error({
+          message: `Lỗi sửa dự án!`,
+          description: rs.status,
+          placement: "topRight",
+        });
+      }
+    } else {
+      const rs = await API.post("congviec", congviec);
+      console.log("kkkkk add congviec", rs);
+      // return;
+      if (rs) {
+        setIsModalOpen(false);
+        getData();
+      } else {
+        notify.error({
+          message: `Lỗi thêm dự án!`,
+          description: rs.status,
+          placement: "topRight",
+        });
+      }
+    }
+  };
   const onChangeText = (key, e) => {
     console.log("kkkkk ", e?.target?.value ?? e);
     if (["TrangThai"].includes(key)) {
@@ -213,7 +218,11 @@ const CongViec = () => {
       title: "Action",
       render: (_, congviec) => (
         <Space>
-          {/* <a onClick={() => onCongviec(congviec.MaCongViec)}>Công việc</a> */}
+          <a 
+          // onClick={() => onCongviec(congviec.MaCongViec)}
+          >
+            Chi tiết
+          </a>
           <a
             style={{ marginLeft: 5 }}
             onClick={() => onEdit(congviec.MaCongViec)}
@@ -222,7 +231,7 @@ const CongViec = () => {
           </a>
           <Popconfirm
             title="Chắc chắn xóa?"
-            // onConfirm={() => onDelete(congviec.MaCongViec)}
+            onConfirm={() => onDelete(congviec.MaCongViec)}
           >
             <a style={{ color: "red", marginLeft: 5 }}>Xóa</a>
           </Popconfirm>
@@ -232,53 +241,6 @@ const CongViec = () => {
   ];
 
   return (
-    // <Layout
-    //   style={{
-    //     minHeight: "100vh",
-    //   }}
-    // >
-    //   <Sider
-    //     collapsible
-    //     theme="light"
-    //     collapsed={collapsed}
-    //     onCollapse={(value) => setCollapsed(value)}
-    //   >
-    //     <div className="demo-logo-vertical" />
-    //     <Search
-    //       placeholder="Tìm kiếm ở đây..."
-    //       onSearch={onSearch}
-    //       enterButton
-    //     />
-
-    //     <Menu
-    //       theme="light"
-    //       defaultSelectedKeys={["1"]}
-    //       mode="inline"
-    //       items={items}
-    //     />
-    //   </Sider>
-    //   <Layout>
-    //     <Header
-    //       style={{
-    //         padding: 0,
-    //         background: colorBgContainer,
-    //         fontSize: 20,
-    //         fontStyle: Blob,
-    //       }}
-    //     ></Header>
-    //     <Content
-    //       style={{
-    //         margin: "16px",
-    //       }}
-    //     >
-    //       <Breadcrumb style={{}}></Breadcrumb>
-    //       <div
-    //         style={{
-    //           padding: 24,
-    //           minHeight: 650,
-    //           background: colorBgContainer,
-    //         }}
-    //       >
     <>
       <div
         style={{
@@ -309,7 +271,7 @@ const CongViec = () => {
         }
       >
         <Form
-          // onFinish={onFinish}
+          onFinish={onFinish}
           layout="vertical"
           className="row-col"
           style={{ marginTop: 12 }}

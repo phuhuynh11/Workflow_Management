@@ -26,24 +26,24 @@ const props = {
 const Dashboard = () => {
 
     // eslint-disable-next-line no-unused-vars
-    const options = [
-        {
-            value: 'Member',
-            label: 'Member',
-        },
-        {
-            value: 'Admin',
-            label: 'Admin',
-        },
-        {
-            value: 'Manager',
-            label: 'Manager',
-        },
-        {
-            value: 'Director',
-            label: 'Director',
-        },
-    ];
+    // const options = [
+    //     {
+    //         value: 'Member',
+    //         label: 'Member',
+    //     },
+    //     {
+    //         value: 'Admin',
+    //         label: 'Admin',
+    //     },
+    //     {
+    //         value: 'Manager',
+    //         label: 'Manager',
+    //     },
+    //     {
+    //         value: 'Director',
+    //         label: 'Director',
+    //     },
+    // ];
     const onChange = (value) => {
         console.log(value);
     };
@@ -65,6 +65,7 @@ const Dashboard = () => {
     ];
     const config = {
         appendPadding: 10,
+        // options,
         data,
         angleField: 'value',
         colorField: 'type',
@@ -113,7 +114,7 @@ const Dashboard = () => {
                 <Row>
                     <Col span={12}>
                         <div className="mt-4">
-                            <h3 className="mb-5 title">Công Việc </h3>
+                            <h3 className="mb-5 title">Công Việc</h3>
                             <div>
                                 <Pie {...config} />
                             </div>
