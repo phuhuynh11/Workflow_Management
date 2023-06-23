@@ -193,6 +193,7 @@ const ChiTietCongViec = () => {
     {
       title: "Tài Liệu",
       dataIndex: "TenTaiLieuCV",
+      render: (val) => <a>Tài liệu tham khảo</a>,
     },
     {
       title: "Người Thực Hiện",
@@ -250,7 +251,8 @@ const ChiTietCongViec = () => {
           marginTop: 5,
         }}
       >
-        {UserStore.userInfo?.quyen === "Admin" ? (
+        {UserStore.userInfo?.nguoidung === "Manager" ||
+        UserStore.userInfo?.nguoidung === "Director" ? (
           <Button type="primary" icon={<PlusOutlined />} onClick={onEdit}>
             Phân công công việc
           </Button>
