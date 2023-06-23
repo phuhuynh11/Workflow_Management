@@ -30,12 +30,12 @@ const Login = () => {
       
     const onFinish = async (values) => {
         const { Username, Password } = values;
-        const rs = await API.post("login", { Username, Password });
+        const rs = await API.post("auth/login", { Username, Password });
         console.log("kkkkk add nguoidung", rs);
     // return;
         if (rs) {
           history.push("/Dashboard");
-          localStorage.setItem(USER_INFO, JSON.stringify(rs.data));
+          localStorage.setItem(USER_INFO, JSON.stringify(rs));
         } else {
           console.error({
             message: `Login failed!`,

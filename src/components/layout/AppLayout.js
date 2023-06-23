@@ -6,10 +6,10 @@ import {
   DesktopOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme, Button } from "antd";
-import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { NavLink, useParams } from "react-router-dom";
 import { PoweroffOutlined } from "@ant-design/icons";
-import Duan from "./du-an";
+import API from "../../utils/API";
 const { Header, Content, Sider } = Layout;
 
 function getItem(label, key, icon, children) {
@@ -54,8 +54,14 @@ const items = [
 ];
 const AppLayout = (props) => {
   console.log("kkkk", props);
+  const { id } = useParams();
   const [collapsed, setCollapsed] = useState(false);
   const [loadings, setLoadings] = useState([]);
+  const [nguoidungs, setNguoidungs] = useState([]);
+  const [nguoidung, setNguoidung] = useState({});
+  // useEffect(() => {
+  //   getData();
+  // }, []);
   const enterLoading = (index) => {
     setLoadings((prevLoadings) => {
       const newLoadings = [...prevLoadings];
@@ -70,9 +76,18 @@ const AppLayout = (props) => {
       });
     }, 400);
   };
+  // const getData = async () => {
+  //   const rs = await API.get(`auth/login/${id}`);
+  //   console.log("kkkkk nguoidung by id", rs);
+  // };
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+  // const COLUMNS = [
+  //   {
+  //     dataIndex: "Ten",
+  //   },
+  // ];
   return (
     <Layout
       style={{
@@ -104,7 +119,7 @@ const AppLayout = (props) => {
           }}
         >
           <div style={{ marginLeft: 1200, fontSize: 18 }}>
-            <a style={{ color: "black" }}>Huỳnh Ngọc Phú</a>
+            {/* <a columns={COLUMNS}/> */}
             <Button
               type="primary"
               icon={<PoweroffOutlined />}

@@ -73,7 +73,7 @@ const CongViec = () => {
     }
   }, [isModalOpen, isEdit]);
   const getData = async () => {
-    const rs = await API.get("congviec");
+    const rs = await API.get(`congviecbyduan/${id}`);
     console.log("kkkk", rs);
     // return;
     if (rs && rs.length > 0) {
