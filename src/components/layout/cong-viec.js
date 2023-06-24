@@ -273,6 +273,7 @@ const CongViec = () => {
         }
       >
         <Form
+          ref={formRef}
           onFinish={onFinish}
           layout="vertical"
           className="row-col"

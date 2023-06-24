@@ -1,7 +1,4 @@
-import {
-  PlusOutlined,
-  CloseOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, CloseOutlined } from "@ant-design/icons";
 
 import {
   Layout,
@@ -36,6 +33,7 @@ const User = () => {
     getData();
   }, []);
   useEffect(() => {
+    console.log("kkkkk isModalOpen isEdit", isModalOpen, isEdit);
     if (isModalOpen && isEdit) {
       formRef.current?.setFieldsValue(nguoidung);
     } else {
@@ -73,6 +71,7 @@ const User = () => {
     setIsModalOpen(true);
     setIsEdit(true);
     setNguoiDung({ ..._nguoidung });
+    console.log("kkkkk _duan", _nguoidung);
   };
   const onDelete = async (MaNguoiDung) => {
     const rs = await API.delete(`nguoidung/${MaNguoiDung}`);
@@ -91,9 +90,12 @@ const User = () => {
     }
   };
   const onFinish = async () => {
+    console.log("kkkkk duan", nguoidung);
+
     if (isEdit) {
       const rs = await API.put(`nguoidung/${nguoidung.MaNguoiDung}`, nguoidung);
-      console.log("kkkkk update duan", rs);
+      console.log("kkkkk update nguoidung", rs);
+      // return;
       if (rs) {
         setIsModalOpen(false);
         getData();
@@ -121,9 +123,10 @@ const User = () => {
   const onChangeText = (key, e) => {
     if (["TrangThai"].includes(key)) {
       setNguoiDung({ ...nguoidung, [key]: e });
-    } else if (["GioiTinh"].includes(key)) {
+    }
+    if (["GioiTinh"].includes(key)) {
       setNguoiDung({ ...nguoidung, [key]: e });
-    }else {
+    } else {
       setNguoiDung({ ...nguoidung, [key]: e.target.value || e });
     }
   };
@@ -176,8 +179,8 @@ const User = () => {
     },
     {
       title: "Giới Tính",
-      key: "GioiTinh",
       dataIndex: "GioiTinh",
+      render: (val) => <span>{val === 1 ? "Nam" : "Nữ"}</span>,
     },
     {
       title: "Trạng Thái",
@@ -204,7 +207,10 @@ const User = () => {
       render: (_, value) => (
         <Space>
           <a onClick={() => onCongviec(value.MaNguoiDung)}>Công việc</a>
-          <a style={{ marginLeft: 5 }} onClick={() => onEdit(value.MaNguoiDung)}>
+          <a
+            style={{ marginLeft: 5 }}
+            onClick={() => onEdit(value.MaNguoiDung)}
+          >
             Sửa
           </a>
           <Popconfirm
@@ -219,7 +225,6 @@ const User = () => {
   ];
 
   return (
-
     <>
       <div
         style={{
@@ -250,6 +255,7 @@ const User = () => {
         }
       >
         <Form
+          ref={formRef}
           onFinish={onFinish}
           layout="vertical"
           className="row-col"
@@ -317,10 +323,15 @@ const User = () => {
           </Form.Item>
           <Form.Item label="Giới Tính" name="GioiTinh">
             <Select
+              defaultValue={`${nguoidung.GioiTinh}` === "1" ? "1" : "0"}
               onChange={(txt) => onChangeText("GioiTinh", txt)}
               style={{ width: "100%" }}
               value={
-                `${nguoidung.GioiTinh}` === 0 ? "Nam" : `${nguoidung.GioiTinh}` === 1 ? "Nữ" : null
+                `${nguoidung.GioiTinh}` === 0
+                  ? "Nam"
+                  : `${nguoidung.GioiTinh}` === 1
+                  ? "Nữ"
+                  : null
               }
             >
               <Option value={0}>Nam</Option>
@@ -333,7 +344,9 @@ const User = () => {
               onChange={(txt) => onChangeText("TrangThai", txt)}
               style={{ width: "100%" }}
               value={
-                `${nguoidung.TrangThai}` === 0 ? "Chưa hoàn thành" : "Hoàn thành"
+                `${nguoidung.TrangThai}` === 0
+                  ? "Chưa hoàn thành"
+                  : "Hoàn thành"
               }
             >
               <Option value={1}>Hoàn thành</Option>
@@ -369,7 +382,6 @@ const User = () => {
       </Modal>
       {contextHolder}
     </>
-
   );
 };
 export default User;
