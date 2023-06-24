@@ -168,8 +168,9 @@ const CongViec = () => {
   };
 
   const onChiTietCongviec = (cv) => {
-    history.push(`/cong-viec/${cv.MaCongViec}`);
-    UserStore.setCongViecHienTai(cv);
+    history.push(`/cong-viec/${cv.MaCongViec}`, { data: cv });
+    // UserStore.setCongViecHienTai(cv);
+    console.log("kkkkchitiet", cv);
   };
   // const _onDatePickerFinish = (dates) => {
   //   console.log("kkkkk _onDatePickerFinish start", dates[0]);

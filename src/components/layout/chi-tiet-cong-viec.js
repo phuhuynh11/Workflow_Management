@@ -21,10 +21,12 @@ import {
 } from "antd";
 import API from "../../utils/API";
 import { useEffect, useRef, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams, useLocation } from "react-router-dom";
 import UserStore from "../../stores/UserStore";
+import CongViec from "./cong-viec";
 const { TextArea } = Input;
 const { Option } = Select;
+
 // import Appdate from "./Appdate";
 // import moment from "moment";
 const onSearch = (value) => console.log(value);
@@ -42,14 +44,18 @@ const ChiTietCongViec = () => {
   const { id } = useParams();
   // console.log(id);
   const formRef = useRef(null);
+  const location = useLocation();
+  const data = location.state?.data;
   const [collapsed, setCollapsed] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [congviecs, setCongviecs] = useState([]);
   const [congviec, setCongviec] = useState({});
   const [nguoiDungs, setNguoiDungs] = useState([]);
+  const [taiLieus, setTaiLieus] = useState([]);
 
   // const [congviecbyduan, setCongviecbyduan] = useState({});
+  console.log("kkkk location.state", location.state);
 
   const {
     token: { colorBgContainer },
@@ -60,6 +66,7 @@ const ChiTietCongViec = () => {
   useEffect(() => {
     getData();
     getNguoiDungs();
+    getTaiLieus();
   }, []);
   useEffect(() => {
     console.log("kkkkk isModalOpen isEdit", isModalOpen, isEdit);
@@ -67,16 +74,16 @@ const ChiTietCongViec = () => {
       formRef.current?.setFieldsValue(congviec);
     } else {
       formRef.current?.setFieldsValue({
-        TenCongViec: "",
+        TenCongViec: UserStore.congViecHienTai.TenCongViec,
         TenTaiLieuCV: "",
         Ten: "",
-        TrangThai: "",
       });
     }
   }, [isModalOpen, isEdit]);
+
   const getData = async () => {
     const rs = await API.get(`congviec/${id}`);
-    console.log("kkkk", rs);
+    console.log("kkkkk getData rs", rs);
     // return;
     if (rs && rs.length > 0) {
       setCongviecs(rs);
@@ -109,16 +116,24 @@ const ChiTietCongViec = () => {
     }
   };
 
+  const getTaiLieus = async () => {
+    const rs = await API.get("tailieu");
+    console.log("kkkkk get tailieu", rs);
+    if (rs) {
+      setTaiLieus(rs);
+    }
+  };
+
   // const onChiTietCongviec = (MaCongViec) => {
   //   history.push(`/cong-viec/${MaCongViec}`);
   // };
 
-  const onEdit = (MaCongViec) => {
-    const _chitietcv = congviecs.find((k) => k.MaCongViec === MaCongViec);
+  const onEdit = () => {
+    // const _chitietcv = UserStore.congViecHienTai;
     setIsModalOpen(true);
     setIsEdit(true);
-    setCongviec({ ..._chitietcv });
-    console.log("kkkkk _chitietcv", _chitietcv);
+    setCongviec(congviecs[0]);
+    console.log("kkkkk _chitietcv", CongViec);
   };
   //   const onDelete = async (MaCongViec) => {
   //     const rs = await API.delete(`congviec/${MaCongViec}`);
@@ -173,7 +188,7 @@ const ChiTietCongViec = () => {
   };
   const onChangeText = (key, e) => {
     console.log("kkkkk ", e?.target?.value ?? e);
-    if (["Ten"].includes(key)) {
+    if (["MaTaiLieuCV", "MaNguoiDung"].includes(key)) {
       setCongviec({ ...congviec, [key]: e });
     } else {
       setCongviec({ ...congviec, [key]: e.target.value });
@@ -213,11 +228,11 @@ const ChiTietCongViec = () => {
     {
       title: "Trạng Thái",
       dataIndex: "TrangThai",
-      //   render: (val) => (
-      //     <span>
-      //       {val === 1 ? "Hoàn thành" : val === 2 ? "Trễ" : "Chưa hoàn thành"}
-      //     </span>
-      //   ),
+      render: (val) => (
+        <span>
+          {val === 1 ? "Hoàn thành" : val === 2 ? "Trễ" : "Chưa hoàn thành"}
+        </span>
+      ),
     },
     // {
     //   title: "Ngày Bắt Đầu",
@@ -288,6 +303,7 @@ const ChiTietCongViec = () => {
         }
       >
         <Form
+          ref={formRef}
           onFinish={onFinish}
           layout="vertical"
           className="row-col"
@@ -310,24 +326,24 @@ const ChiTietCongViec = () => {
               disabled={true}
             />
           </Form.Item>
-          <Form.Item label="Tài Liệu" name="TenTaiLieu">
+          <Form.Item label="Tài Liệu" name="MaTaiLieuCV">
             <Select
-              onChange={(txt) => onChangeText("TenTaiLieu", txt)}
+              onChange={(txt) => onChangeText("MaTaiLieuCV", txt)}
               style={{ width: "100%" }}
             >
-              {/* {TenTaiLieu.map((b) => {
+              {taiLieus.map((t) => {
                 return (
-                  <Option key={b.id} value={b.id}>
-                    {b.name}
+                  <Option key={t.MaTaiLieu} value={t.MaTaiLieu}>
+                    {t.TenTaiLieu}
                   </Option>
                 );
-              })} */}
+              })}
             </Select>
           </Form.Item>
-          <Form.Item label="Người Thực Hiện" name="Ten">
+          <Form.Item label="Người Thực Hiện" name="MaNguoiDung">
             <Select
               mode="multiple"
-              onChange={(txt) => onChangeText("Ten", txt)}
+              onChange={(txt) => onChangeText("MaNguoiDung", txt)}
               style={{ width: "100%" }}
             >
               {nguoiDungs.map((n) => {
