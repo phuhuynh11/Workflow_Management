@@ -22,6 +22,7 @@ import {
 import API from "../../utils/API";
 import { useEffect, useRef, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
+import UserStore from "../../stores/UserStore";
 const { Search } = Input;
 const { Option } = Select;
 // import Appdate from "./Appdate";
@@ -166,8 +167,9 @@ const CongViec = () => {
     }
   };
 
-  const onChiTietCongviec = (MaCongViec) => {
-    history.push(`/cong-viec/${MaCongViec}`);
+  const onChiTietCongviec = (cv) => {
+    history.push(`/cong-viec/${cv.MaCongViec}`);
+    UserStore.setCongViecHienTai(cv);
   };
   // const _onDatePickerFinish = (dates) => {
   //   console.log("kkkkk _onDatePickerFinish start", dates[0]);
@@ -221,9 +223,7 @@ const CongViec = () => {
       title: "Action",
       render: (_, congviec) => (
         <Space>
-          <a onClick={() => onChiTietCongviec(congviec.MaCongViec)}>
-            Chi tiết công việc
-          </a>
+          <a onClick={() => onChiTietCongviec(congviec)}>Chi tiết công việc</a>
           <a
             style={{ marginLeft: 5 }}
             onClick={() => onEdit(congviec.MaCongViec)}

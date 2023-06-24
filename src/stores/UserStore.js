@@ -3,6 +3,7 @@ import { USER_INFO } from "../utils/Constants";
 
 class UserStore {
   userInfo = {};
+  congViecHienTai = {};
   constructor() {
     makeAutoObservable(this);
   }
@@ -15,6 +16,10 @@ class UserStore {
     if (_user) {
       this.userInfo = JSON.parse(_user);
     }
+  }
+
+  setCongViecHienTai(cvht) {
+    this.congViecHienTai = cvht;
   }
   isSignedIn() {
     const _user = localStorage.getItem(USER_INFO);

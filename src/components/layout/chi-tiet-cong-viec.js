@@ -47,6 +47,8 @@ const ChiTietCongViec = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [congviecs, setCongviecs] = useState([]);
   const [congviec, setCongviec] = useState({});
+  const [nguoiDungs, setNguoiDungs] = useState([]);
+
   // const [congviecbyduan, setCongviecbyduan] = useState({});
 
   const {
@@ -57,6 +59,7 @@ const ChiTietCongViec = () => {
   const [notify, contextHolder] = notification.useNotification();
   useEffect(() => {
     getData();
+    getNguoiDungs();
   }, []);
   useEffect(() => {
     console.log("kkkkk isModalOpen isEdit", isModalOpen, isEdit);
@@ -96,6 +99,14 @@ const ChiTietCongViec = () => {
   const onAdd = () => {
     setIsEdit(false);
     showModal();
+  };
+
+  const getNguoiDungs = async () => {
+    const rs = await API.get("nguoidung");
+    console.log("kkkkk get nguoidung", rs);
+    if (rs) {
+      setNguoiDungs(rs);
+    }
   };
 
   // const onChiTietCongviec = (MaCongViec) => {
@@ -162,7 +173,7 @@ const ChiTietCongViec = () => {
   };
   const onChangeText = (key, e) => {
     console.log("kkkkk ", e?.target?.value ?? e);
-    if (["TrangThai"].includes(key)) {
+    if (["Ten"].includes(key)) {
       setCongviec({ ...congviec, [key]: e });
     } else {
       setCongviec({ ...congviec, [key]: e.target.value });
@@ -251,8 +262,8 @@ const ChiTietCongViec = () => {
           marginTop: 5,
         }}
       >
-        {UserStore.userInfo?.nguoidung === "Manager" ||
-        UserStore.userInfo?.nguoidung === "Director" ? (
+        {UserStore.userInfo?.nguoidung !== "Manager" ||
+        UserStore.userInfo?.nguoidung !== "Director" ? (
           <Button type="primary" icon={<PlusOutlined />} onClick={onEdit}>
             Phân công công việc
           </Button>
@@ -295,7 +306,8 @@ const ChiTietCongViec = () => {
             <Input
               placeholder="Tên Công Việc"
               onChange={(txt) => onChangeText("TenCongViec", txt)}
-              value={congviec.TenCongViec}
+              value={UserStore.congViecHienTai.TenCongViec}
+              disabled={true}
             />
           </Form.Item>
           <Form.Item label="Tài Liệu" name="TenTaiLieu">
@@ -318,13 +330,13 @@ const ChiTietCongViec = () => {
               onChange={(txt) => onChangeText("Ten", txt)}
               style={{ width: "100%" }}
             >
-              {/* {Ten.map((b) => {
+              {nguoiDungs.map((n) => {
                 return (
-                  <Option key={b.id} value={b.id}>
-                    {b.name}
+                  <Option key={n.MaNguoiDung} value={n.MaNguoiDung}>
+                    {n.Ten}
                   </Option>
                 );
-              })} */}
+              })}
             </Select>
           </Form.Item>
           {/* <Form.Item label="Trạng Thái" name="TrangThai">
