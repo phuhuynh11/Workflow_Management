@@ -73,7 +73,7 @@ const CongViec = () => {
     }
   }, [isModalOpen, isEdit]);
   const getData = async () => {
-    const rs = await API.get(`congviecbyduan/${id}`);
+    const rs = await API.get("congviec");
     console.log("kkkk", rs);
     // return;
     if (rs && rs.length > 0) {
@@ -262,7 +262,7 @@ const CongViec = () => {
       />
 
       <Modal
-        title={`${isEdit ? "Sửa" : "Add"} Công Việc`}
+        title={`${isEdit ? "Sửa" : "Thêm"} Công Việc`}
         open={isModalOpen}
         footer={null}
         closeIcon={

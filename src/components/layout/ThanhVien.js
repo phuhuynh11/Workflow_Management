@@ -1,367 +1,375 @@
 import {
-    FileDoneOutlined,
-    FileAddOutlined,
-    PlusOutlined,
-    CloseOutlined,
-  } from "@ant-design/icons";
-  
-  import {
-    Breadcrumb,
-    Layout,
-    Menu,
-    theme,
-    Button,
-    Modal,
-    Space,
-    Form,
-    Input,
-    Table,
-    Select,
-    Popconfirm,
-    notification,
-  } from "antd";
-  import { useEffect, useRef, useState } from "react";
-  import API from "../../utils/API";
-  import { useHistory } from "react-router-dom";
-  import { resetObject } from "../../utils/Common";
-  import Appdate from "./Appdate";
-  import moment from "moment";
-  const { Search } = Input;
-  const { Option } = Select;
-  const onSearch = (value) => console.log(value);
-  const { Header, Content, Sider } = Layout;
-  function getItem(label, key, icon, children) {
-    return {
-      key,
-      icon,
-      children,
-      label,
-    };
-  }
-  
-  const User = () => {
-    const formRef = useRef(null);
-    const [isEdit, setIsEdit] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [collapsed, setCollapsed] = useState(false);
-    const [duans, setDuans] = useState([]);
-    const [duan, setDuan] = useState({});
-    const {
-      token: { colorBgContainer },
-    } = theme.useToken();
-    const history = useHistory();
-    const [notify, contextHolder] = notification.useNotification();
-    useEffect(() => {
+  PlusOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
+
+import {
+  Layout,
+  theme,
+  Button,
+  Modal,
+  Space,
+  Form,
+  Input,
+  Table,
+  Select,
+  Popconfirm,
+  notification,
+} from "antd";
+import { useEffect, useRef, useState } from "react";
+import API from "../../utils/API";
+import { useHistory } from "react-router-dom";
+const { Option } = Select;
+
+const User = () => {
+  const formRef = useRef(null);
+  const [isEdit, setIsEdit] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [nguoidungs, setNguoiDungs] = useState([]);
+  const [nguoidung, setNguoiDung] = useState({});
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
+  const history = useHistory();
+  const [notify, contextHolder] = notification.useNotification();
+  useEffect(() => {
+    getData();
+  }, []);
+  useEffect(() => {
+    if (isModalOpen && isEdit) {
+      formRef.current?.setFieldsValue(nguoidung);
+    } else {
+      formRef.current?.setFieldsValue({
+        HoLot: "",
+        Ten: "",
+        Email: "",
+        DiaChi: "",
+        SoDienThoai: "",
+        ViTri: "",
+        GioiTinh: "",
+        TrangThai: "",
+        Username: "",
+        Password: "",
+      });
+    }
+  }, [isModalOpen, isEdit]);
+  const getData = async () => {
+    const rs = await API.get("nguoidung");
+    if (rs && rs.length > 0) {
+      setNguoiDungs(rs);
+    } else {
+      notify.error({
+        message: `Không có người dùng!`,
+        description: rs.status,
+        placement: "topRight",
+      });
+    }
+  };
+  const onCongviec = (MaDuAn) => {
+    history.push(`/du-an/${MaDuAn}`);
+  };
+  const onEdit = (MaNguoiDung) => {
+    const _nguoidung = nguoidungs.find((k) => k.MaNguoiDung === MaNguoiDung);
+    setIsModalOpen(true);
+    setIsEdit(true);
+    setNguoiDung({ ..._nguoidung });
+  };
+  const onDelete = async (MaNguoiDung) => {
+    const rs = await API.delete(`nguoidung/${MaNguoiDung}`);
+    if (rs) {
+      notify.success({
+        message: `Xóa người dùng thành công!`,
+        placement: "topRight",
+      });
       getData();
-    }, []);
-    useEffect(() => {
-      console.log("kkkkk isModalOpen isEdit", isModalOpen, isEdit);
-      if (isModalOpen && isEdit) {
-        formRef.current?.setFieldsValue(duan);
-      } else {
-        formRef.current?.setFieldsValue({
-          TenDuAn: "",
-          MoTaDuAn: "",
-          NgayBatDau: "",
-          NgayKetThuc: "",
-        });
-      }
-    }, [isModalOpen, isEdit]);
-    const getData = async () => {
-      const rs = await API.get("duan");
-      if (rs && rs.length > 0) {
-        setDuans(rs);
-      } else {
-        notify.error({
-          message: `Không có dự án!`,
-          description: rs.status,
-          placement: "topRight",
-        });
-      }
-    };
-    // const items = [
-    //   getItem("Dự án", "du_an", <FileDoneOutlined />, [
-    //     getItem("Thêm dự án", "them_du_an", <FileAddOutlined />),
-    //   ]),
-    // ];
-    const onCongviec = (MaDuAn) => {
-      history.push(`/du-an/${MaDuAn}`);
-    };
-    const onEdit = (MaDuAn) => {
-      const _duan = duans.find((k) => k.MaDuAn === MaDuAn);
-      setIsModalOpen(true);
-      setIsEdit(true);
-      setDuan({ ..._duan });
-      console.log("kkkkk _duan", _duan);
-    };
-    const onDelete = async (MaDuAn) => {
-      const rs = await API.delete(`duan/${MaDuAn}`);
-      console.log("kkkkk delete duan", rs);
+    } else {
+      notify.error({
+        message: `Lỗi xóa người dùng!`,
+        description: rs.status,
+        placement: "topRight",
+      });
+    }
+  };
+  const onFinish = async () => {
+    if (isEdit) {
+      const rs = await API.put(`nguoidung/${nguoidung.MaNguoiDung}`, nguoidung);
+      console.log("kkkkk update duan", rs);
       if (rs) {
-        notify.success({
-          message: `Xóa dự án thành công!`,
-          placement: "topRight",
-        });
-  
+        setIsModalOpen(false);
         getData();
       } else {
         notify.error({
-          message: `Lỗi xóa dự án!`,
+          message: `Lỗi sửa người dùng!`,
           description: rs.status,
           placement: "topRight",
         });
       }
-    };
-    const onFinish = async () => {
-      console.log("kkkkk duan", duan);
-      // return;
-      if (isEdit) {
-        const rs = await API.put(`duan/${duan.MaDuAn}`, duan);
-        console.log("kkkkk update duan", rs);
-        if (rs) {
-          setIsModalOpen(false);
-          getData();
-        } else {
-          notify.error({
-            message: `Lỗi sửa dự án!`,
-            description: rs.status,
-            placement: "topRight",
-          });
-        }
+    } else {
+      const rs = await API.post("nguoidung", nguoidung);
+      if (rs) {
+        setIsModalOpen(false);
+        getData();
       } else {
-        const rs = await API.post("duan", duan);
-        console.log("kkkkk add duan", rs);
-        if (rs) {
-          setIsModalOpen(false);
-          getData();
-        } else {
-          notify.error({
-            message: `Lỗi thêm dự án!`,
-            description: rs.status,
-            placement: "topRight",
-          });
-        }
+        notify.error({
+          message: `Lỗi thêm người dùng!`,
+          description: rs.status,
+          placement: "topRight",
+        });
       }
-    };
-    // const onChangeText = (key, e) => {
-    //   console.log("kkkkk ", e.target.value);
-    //   setDuan({ ...duan, [key]: e.target.value });
-    // };
-  
-    const onChangeText = (key, e) => {
-      console.log("kkkkk ", e?.target?.value ?? e);
-      if (["TrangThai"].includes(key)) {
-        setDuan({ ...duan, [key]: e });
-      } else {
-        setDuan({ ...duan, [key]: e.target.value || e });
-      }
-    };
-  
-    const onAdd = () => {
-      setIsEdit(false);
-      showModal();
-    };
-    const showModal = () => {
-      setIsModalOpen(true);
-    };
-    const hideModal = () => {
-      setIsModalOpen(false);
-    };
-    const onMenuClick = ({ key }) => {
-      console.log("kkkk item");
-      if (key === "them_du_an") {
-        showModal();
-        // const onAdd = () => {
-        //   setIsEdit(false);
-        //   showModal();
-        // };
-      }
-      if (key === "du_an") {
-        //
-      }
-    };
-  
-    const _onDatePickerFinish = (dates) => {
-      console.log("kkkkk _onDatePickerFinish start", dates[0]);
-      console.log("kkkkk _onDatePickerFinish end", dates[1]);
-      setDuan({
-        ...duan,
-        NgayBatDau: moment(dates[0]).format("YYYY-MM-DD"),
-        NgayKetThuc: moment(dates[1]).format("YYYY-MM-DD"),
-      });
-    };
-  
-    const COLUMNS = [
-      {
-        title: "Họ Lót",
-        dataIndex: "HoLot",
-      },
-      {
-        title: "Tên",
-        dataIndex: "Ten",
-      },
-      {
-        title: "Email",
-        dataIndex: "Email",
-      },
-      {
-        title: "Địa Chỉ",
-        dataIndex: "DiaChi",
-      },
-      {
-        title: "Số Điện Thoại",
-        dataIndex: "SoDienThoai",
-      },
-      {
-        title: "Vị Trí",
-        dataIndex: "ViTri",
-      },
-      {
-        title: "Giới Tính",
-        dataIndex: "GioiTinh",
-      },
-      {
-        title: "Trạng Thái",
-        dataIndex: "TrangThai",
-        render: (val) => (
-          <span>{val === 1 ? "Hoàn thành" : val === 2 ? "Trễ" : "Chưa hoàn thành"}</span>
-        ),
-      },
-      {
-        title: "Username",
-        dataIndex: "Username",
-      },
-      {
-        title: "Password",
-        dataIndex: "Password",
-      },
-      {
-        title: "Loại Người Dùng",
-        dataIndex: "MaLoaiNguoiDung",
-      },
-    //   {
-    //     title: "Ngày Bắt Đầu",
-    //     dataIndex: "NgayBatDau",
-    //     // render: (val) => <span>{moment(val).format("YYYY-MM-DD")}</span>,
-    //   },
-    //   {
-    //     title: "Ngày Kết Thúc",
-    //     dataIndex: "NgayKetThuc",
-    //     // render: (val) => <span>{moment(val).format("YYYY-MM-DD")}</span>,
-    //   },
-      {
-        title: "Action",
-        render: (_, duan) => (
-          <Space>
-            <a onClick={() => onCongviec(duan.MaDuAn)}>Công việc</a>
-            <a style={{ marginLeft: 5 }} onClick={() => onEdit(duan.MaDuAn)}>
-              Sửa
-            </a>
-            <Popconfirm
-              title="Chắc chắn xóa?"
-              onConfirm={() => onDelete(duan.MaDuAn)}
-            >
-              <a style={{ color: "red", marginLeft: 5 }}>Xóa</a>
-            </Popconfirm>
-          </Space>
-        ),
-      },
-    ];
-  
-    return (
-     
-      <>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: 5,
-          }}
-        >
-          <Button type="primary" icon={<PlusOutlined />} onClick={onAdd}>
-            Thêm
-          </Button>
-        </div>
-        <Table
-          dataSource={duans}
-          columns={COLUMNS}
-          rowKey="MaDuAn"
-          style={{ marginTop: 8 }}
-        />
-  
-        <Modal
-          title={`${isEdit ? "Sửa" : "Add"} Dự án`}
-          open={isModalOpen}
-          footer={null}
-          closeIcon={
-            <div onClick={hideModal}>
-              <CloseOutlined />
-            </div>
-          }
-        >
-          <Form
-            onFinish={onFinish}
-            layout="vertical"
-            className="row-col"
-            style={{ marginTop: 12 }}
-          >
-            <Form.Item
-              label="Tên dự án"
-              name="TenDuAn"
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập tên dự án!",
-                },
-              ]}
-            >
-              <Input
-                placeholder="Tên Dự Án"
-                onChange={(txt) => onChangeText("TenDuAn", txt)}
-                value={duan.TenDuAn}
-              />
-            </Form.Item>
-            <Form.Item label="Mô Tả" name="MoTaDuAn">
-              <Input
-                placeholder="Mô Tả"
-                onChange={(txt) => onChangeText("MoTaDuAn", txt)}
-                value={duan.MoTaDuAn}
-              />
-            </Form.Item>
-            <Form.Item label="Trạng Thái" name="TrangThai">
-              <Select
-                defaultValue={`${duan.TrangThai}` === "1" ? "1" :`${duan.TrangThai}` === "2" ? "2" : "3"}
-                onChange={(txt) => onChangeText("TrangThai", txt)}
-                style={{ width: "100%" }}
-                value={
-                  `${duan.TrangThai}` === "1" ? "Hoàn thành" :`${duan.TrangThai}` === "2" ? "Trễ" : "Chưa hoàn thành"
-                }
-              >
-                <Option value="1">Hoàn thành</Option>
-                <Option value="2">Trễ</Option>
-                <Option value="3">Chưa hoàn thành</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item label="Ngày Bắt Đầu & kết Thúc">
-              <Appdate finish={_onDatePickerFinish} />
-            </Form.Item>
-            <Form.Item
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-              }}
-            >
-              <Button onClick={hideModal}>Hủy</Button>
-              <Button type="primary" htmlType="submit" style={{ marginLeft: 12 }}>
-                {isEdit ? "Sửa" : "Lưu"}
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
-        {contextHolder}
-      </>
-     
-    );
+    }
   };
-  export default User;
-  
+  const onChangeText = (key, e) => {
+    if (["TrangThai"].includes(key)) {
+      setNguoiDung({ ...nguoidung, [key]: e });
+    } else if (["GioiTinh"].includes(key)) {
+      setNguoiDung({ ...nguoidung, [key]: e });
+    }else {
+      setNguoiDung({ ...nguoidung, [key]: e.target.value || e });
+    }
+  };
+
+  const onAdd = () => {
+    setIsEdit(false);
+    showModal();
+  };
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const hideModal = () => {
+    setIsModalOpen(false);
+  };
+  const COLUMNS = [
+    {
+      title: "Mã Người Dùng",
+      key: "MaNguoiDung",
+      dataIndex: "MaLoaiNguoiDung",
+    },
+    {
+      title: "Họ Lót",
+      key: "HoLot",
+      dataIndex: "HoLot",
+    },
+    {
+      title: "Tên",
+      key: "Ten",
+      dataIndex: "Ten",
+    },
+    {
+      title: "Email",
+      key: "Email",
+      dataIndex: "Email",
+    },
+    {
+      title: "Địa Chỉ",
+      key: "DiaChi",
+      dataIndex: "DiaChi",
+    },
+    {
+      title: "Số Điện Thoại",
+      key: "SoDienThoai",
+      dataIndex: "SoDienThoai",
+    },
+    {
+      title: "Vị Trí",
+      key: "ViTri",
+      dataIndex: "ViTri",
+    },
+    {
+      title: "Giới Tính",
+      key: "GioiTinh",
+      dataIndex: "GioiTinh",
+    },
+    {
+      title: "Trạng Thái",
+      dataIndex: "TrangThai",
+      render: (val) => (
+        <span>{val === 1 ? "Hoàn thành" : "Chưa hoàn thành"}</span>
+      ),
+    },
+    {
+      title: "Username",
+      dataIndex: "Username",
+    },
+    {
+      title: "Password",
+      dataIndex: "Password",
+    },
+    {
+      title: "Mã Loại Người Dùng",
+      key: "MaLoaiNguoiDung",
+      dataIndex: "MaLoaiNguoiDung",
+    },
+    {
+      title: "Action",
+      render: (_, value) => (
+        <Space>
+          <a onClick={() => onCongviec(value.MaNguoiDung)}>Công việc</a>
+          <a style={{ marginLeft: 5 }} onClick={() => onEdit(value.MaNguoiDung)}>
+            Sửa
+          </a>
+          <Popconfirm
+            title="Chắc chắn xóa?"
+            onConfirm={() => onDelete(value.MaNguoiDung)}
+          >
+            <a style={{ color: "red", marginLeft: 5 }}>Xóa</a>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
+
+  return (
+
+    <>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginTop: 5,
+        }}
+      >
+        <Button type="primary" icon={<PlusOutlined />} onClick={onAdd}>
+          Thêm
+        </Button>
+      </div>
+      <Table
+        dataSource={nguoidungs}
+        columns={COLUMNS}
+        rowKey="MaNguoiDung"
+        style={{ marginTop: 8 }}
+      />
+
+      <Modal
+        title={`${isEdit ? "Sửa" : "Thêm"} Người dùng`}
+        open={isModalOpen}
+        footer={null}
+        closeIcon={
+          <div onClick={hideModal}>
+            <CloseOutlined />
+          </div>
+        }
+      >
+        <Form
+          onFinish={onFinish}
+          layout="vertical"
+          className="row-col"
+          style={{ marginTop: 12 }}
+        >
+          <Form.Item
+            label="Họ Lót"
+            name="HoLot"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập họ lót!",
+              },
+            ]}
+          >
+            <Input
+              placeholder="Họ Lót"
+              onChange={(txt) => onChangeText("HoLot", txt)}
+              value={nguoidung.HoLot}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Tên"
+            name="Ten"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập tên!",
+              },
+            ]}
+          >
+            <Input
+              placeholder="Tên"
+              onChange={(txt) => onChangeText("Ten", txt)}
+              value={nguoidung.Ten}
+            />
+          </Form.Item>
+          <Form.Item label="Email" name="Email">
+            <Input
+              placeholder="Email"
+              onChange={(txt) => onChangeText("Email", txt)}
+              value={nguoidung.Email}
+            />
+          </Form.Item>
+          <Form.Item label="Địa Chỉ" name="DiaChi">
+            <Input
+              placeholder="Địa Chỉ"
+              onChange={(txt) => onChangeText("DiaChi", txt)}
+              value={nguoidung.DiaChi}
+            />
+          </Form.Item>
+          <Form.Item label="Số Điện Thoại" name="SoDienThoai">
+            <Input
+              placeholder="Số Điện Thoại"
+              onChange={(txt) => onChangeText("SoDienThoai", txt)}
+              value={nguoidung.SoDienThoai}
+            />
+          </Form.Item>
+          <Form.Item label="Vị Trí" name="ViTri">
+            <Input
+              placeholder="Vị Trí"
+              onChange={(txt) => onChangeText("ViTri", txt)}
+              value={nguoidung.ViTri}
+            />
+          </Form.Item>
+          <Form.Item label="Giới Tính" name="GioiTinh">
+            <Select
+              onChange={(txt) => onChangeText("GioiTinh", txt)}
+              style={{ width: "100%" }}
+              value={
+                `${nguoidung.GioiTinh}` === 0 ? "Nam" : `${nguoidung.GioiTinh}` === 1 ? "Nữ" : null
+              }
+            >
+              <Option value={0}>Nam</Option>
+              <Option value={1}>Nữ</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item label="Trạng Thái" name="TrangThai">
+            <Select
+              defaultValue={`${nguoidung.TrangThai}` === 0 ? 0 : 1}
+              onChange={(txt) => onChangeText("TrangThai", txt)}
+              style={{ width: "100%" }}
+              value={
+                `${nguoidung.TrangThai}` === 0 ? "Chưa hoàn thành" : "Hoàn thành"
+              }
+            >
+              <Option value={1}>Hoàn thành</Option>
+              <Option value={0}>Chưa hoàn thành</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item label="Username" name="Username">
+            <Input
+              placeholder="Username"
+              onChange={(txt) => onChangeText("Username", txt)}
+              value={nguoidung.Username}
+            />
+          </Form.Item>
+          <Form.Item label="Password" name="Password">
+            <Input
+              placeholder="Password"
+              onChange={(txt) => onChangeText("Password", txt)}
+              value={nguoidung.Password}
+            />
+          </Form.Item>
+          <Form.Item
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button onClick={hideModal}>Hủy</Button>
+            <Button type="primary" htmlType="submit" style={{ marginLeft: 12 }}>
+              {isEdit ? "Sửa" : "Lưu"}
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+      {contextHolder}
+    </>
+
+  );
+};
+export default User;
