@@ -1,4 +1,7 @@
-import { PlusOutlined, CloseOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
 
 import {
   Layout,
@@ -12,6 +15,7 @@ import {
   Select,
   Popconfirm,
   notification,
+  Tag,
 } from "antd";
 import { useEffect, useRef, useState } from "react";
 import API from "../../utils/API";
@@ -33,7 +37,6 @@ const User = () => {
     getData();
   }, []);
   useEffect(() => {
-    console.log("kkkkk isModalOpen isEdit", isModalOpen, isEdit);
     if (isModalOpen && isEdit) {
       formRef.current?.setFieldsValue(nguoidung);
     } else {
@@ -44,10 +47,11 @@ const User = () => {
         DiaChi: "",
         SoDienThoai: "",
         ViTri: "",
-        GioiTinh: "",
-        TrangThai: "",
+        GioiTinh: 0,
+        TrangThai: 0,
         Username: "",
         Password: "",
+        // MaLoaiNguoiDung: ""
       });
     }
   }, [isModalOpen, isEdit]);
@@ -71,7 +75,6 @@ const User = () => {
     setIsModalOpen(true);
     setIsEdit(true);
     setNguoiDung({ ..._nguoidung });
-    console.log("kkkkk _duan", _nguoidung);
   };
   const onDelete = async (MaNguoiDung) => {
     const rs = await API.delete(`nguoidung/${MaNguoiDung}`);
@@ -90,12 +93,23 @@ const User = () => {
     }
   };
   const onFinish = async () => {
-    console.log("kkkkk duan", nguoidung);
-
     if (isEdit) {
-      const rs = await API.put(`nguoidung/${nguoidung.MaNguoiDung}`, nguoidung);
-      console.log("kkkkk update nguoidung", rs);
-      // return;
+      if(!nguoidung) return
+      const fixBodyRequest = {
+        GioiTinh:  nguoidung.GioiTinh,
+        HoLot: nguoidung.HoLot,
+        Ten: nguoidung.Ten,
+        Email: nguoidung.Email,
+        DiaChi: nguoidung.DiaChi,
+        SoDienThoai: nguoidung.SoDienThoai,
+        ViTri: nguoidung.ViTri,
+        TrangThai: nguoidung.TrangThai,
+        Username: nguoidung.Username,
+        Password: nguoidung.Password,
+        MaLoaiNguoiDung: nguoidung.MaLoaiNguoiDung
+      }
+      console.log(fixBodyRequest)
+      const rs = await API.put(`nguoidung/${nguoidung.MaNguoiDung}`, fixBodyRequest);
       if (rs) {
         setIsModalOpen(false);
         getData();
@@ -123,10 +137,9 @@ const User = () => {
   const onChangeText = (key, e) => {
     if (["TrangThai"].includes(key)) {
       setNguoiDung({ ...nguoidung, [key]: e });
-    }
-    if (["GioiTinh"].includes(key)) {
+    } else if (["GioiTinh"].includes(key)) {
       setNguoiDung({ ...nguoidung, [key]: e });
-    } else {
+    }else {
       setNguoiDung({ ...nguoidung, [key]: e.target.value || e });
     }
   };
@@ -145,7 +158,7 @@ const User = () => {
     {
       title: "Mã Người Dùng",
       key: "MaNguoiDung",
-      dataIndex: "MaLoaiNguoiDung",
+      dataIndex: "MaNguoiDung",
     },
     {
       title: "Họ Lót",
@@ -179,15 +192,20 @@ const User = () => {
     },
     {
       title: "Giới Tính",
+      key: "GioiTinh",
       dataIndex: "GioiTinh",
-      render: (val) => <span>{val === 1 ? "Nam" : "Nữ"}</span>,
+      render: (val) => (
+        <span>{val && val.data[0] === 1 ? "Nam" : val && val.data[0] === 0 ? "Nữ" : ""}</span>
+      ),
     },
     {
       title: "Trạng Thái",
+      key: "TrangThai",
       dataIndex: "TrangThai",
-      render: (val) => (
-        <span>{val === 1 ? "Hoàn thành" : "Chưa hoàn thành"}</span>
-      ),
+      render: (val) => {
+        return (
+        <Tag color={val === 0 ? "error" : "success"}>{val === 0 ? "Chưa hoàn thành" : "Hoàn thành"}</Tag>
+      )},
     },
     {
       title: "Username",
@@ -201,16 +219,17 @@ const User = () => {
       title: "Mã Loại Người Dùng",
       key: "MaLoaiNguoiDung",
       dataIndex: "MaLoaiNguoiDung",
+      render: (val) => {
+        return (
+        <span>{val === null ? "Chưa được thêm" : val}</span>
+      )},
     },
     {
       title: "Action",
       render: (_, value) => (
         <Space>
           <a onClick={() => onCongviec(value.MaNguoiDung)}>Công việc</a>
-          <a
-            style={{ marginLeft: 5 }}
-            onClick={() => onEdit(value.MaNguoiDung)}
-          >
+          <a style={{ marginLeft: 5 }} onClick={() => onEdit(value.MaNguoiDung)}>
             Sửa
           </a>
           <Popconfirm
@@ -225,6 +244,7 @@ const User = () => {
   ];
 
   return (
+
     <>
       <div
         style={{
@@ -323,30 +343,23 @@ const User = () => {
           </Form.Item>
           <Form.Item label="Giới Tính" name="GioiTinh">
             <Select
-              defaultValue={`${nguoidung.GioiTinh}` === "1" ? "1" : "0"}
               onChange={(txt) => onChangeText("GioiTinh", txt)}
               style={{ width: "100%" }}
               value={
-                `${nguoidung.GioiTinh}` === 0
-                  ? "Nam"
-                  : `${nguoidung.GioiTinh}` === 1
-                  ? "Nữ"
-                  : null
+                `${nguoidung.GioiTinh}` === 0 ? "Nam" : `${nguoidung.GioiTinh}` === 1 ? "Nữ" : null
               }
             >
-              <Option value={0}>Nam</Option>
-              <Option value={1}>Nữ</Option>
+              <Option value={1}>Nam</Option>
+              <Option value={0}>Nữ</Option>
             </Select>
           </Form.Item>
           <Form.Item label="Trạng Thái" name="TrangThai">
             <Select
-              defaultValue={`${nguoidung.TrangThai}` === 0 ? 0 : 1}
+              defaultValue={`${nguoidung.TrangThai}` === 0 ? 0 : `${nguoidung.TrangThai}` === 1 ? 1 : ""}
               onChange={(txt) => onChangeText("TrangThai", txt)}
               style={{ width: "100%" }}
               value={
-                `${nguoidung.TrangThai}` === 0
-                  ? "Chưa hoàn thành"
-                  : "Hoàn thành"
+                `${nguoidung.TrangThai}` === 0 ? "Chưa hoàn thành" : "Hoàn thành"
               }
             >
               <Option value={1}>Hoàn thành</Option>
@@ -367,6 +380,13 @@ const User = () => {
               value={nguoidung.Password}
             />
           </Form.Item>
+          {/* <Form.Item label="MaLoaiNguoiDung" name="MaLoaiNguoiDung">
+            <Input
+              placeholder="MaLoaiNguoiDung"
+              onChange={(txt) => onChangeText("MaLoaiNguoiDung", txt)}
+              value={nguoidung.MaLoaiNguoiDung}
+            />
+          </Form.Item> */}
           <Form.Item
             style={{
               display: "flex",
@@ -382,6 +402,7 @@ const User = () => {
       </Modal>
       {contextHolder}
     </>
+
   );
 };
 export default User;

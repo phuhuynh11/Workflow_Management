@@ -17,16 +17,17 @@ import {
   Table,
   Select,
   Popconfirm,
+  Tag,
   notification,
 } from "antd";
 import API from "../../utils/API";
+import moment from "moment";
+import Appdate from "./Appdate";
 import { useEffect, useRef, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import UserStore from "../../stores/UserStore";
 const { Search } = Input;
 const { Option } = Select;
-// import Appdate from "./Appdate";
-// import moment from "moment";
 const onSearch = (value) => console.log(value);
 const { Header, Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
@@ -74,7 +75,7 @@ const CongViec = () => {
     }
   }, [isModalOpen, isEdit]);
   const getData = async () => {
-    const rs = await API.get("congviec");
+    const rs = await API.get(`congviecbyduan/${id}`);
     console.log("kkkk", rs);
     // return;
     if (rs && rs.length > 0) {
@@ -82,7 +83,7 @@ const CongViec = () => {
     } else {
       notify.error({
         message: `Không Có Công Việc`,
-        description: rs.status,
+        description: rs,
         placement: "topRight",
       });
     }
@@ -143,7 +144,7 @@ const CongViec = () => {
         });
       }
     } else {
-      const rs = await API.post("congviec", congviec);
+      const rs = await API.post(`congviec/${id}`, congviec);
       console.log("kkkkk add congviec", rs);
       // return;
       if (rs) {
@@ -172,21 +173,15 @@ const CongViec = () => {
     // UserStore.setCongViecHienTai(cv);
     console.log("kkkkchitiet", cv);
   };
-  // const _onDatePickerFinish = (dates) => {
-  //   console.log("kkkkk _onDatePickerFinish start", dates[0]);
-  //   console.log("kkkkk _onDatePickerFinish end", dates[1]);
-  //   setCongviec({
-  //     ...congviec,
-  //     NgayBatDau: moment(dates[0]).format("YYYY-MM-DD"),
-  //     NgayKetThuc: moment(dates[1]).format("YYYY-MM-DD"),
-  //   });
-  // };
-
-  // const items = [
-  //   getItem("Công việc", "cong_viec", <FileDoneOutlined />, [
-  //     getItem("Thêm công việc", "them_cong_viec", <FileAddOutlined />),
-  //   ]),
-  // ];
+  const _onDatePickerFinish = (dates) => {
+    console.log("kkkkk _onDatePickerFinish start", dates[0]);
+    console.log("kkkkk _onDatePickerFinish end", dates[1]);
+    setCongviec({
+      ...congviec,
+      NgayBatDau: moment(dates[0]).format("YYYY-MM-DD"),
+      NgayKetThuc: moment(dates[1]).format("YYYY-MM-DD"),
+    });
+  };
 
   const COLUMNS = [
     {
@@ -200,11 +195,12 @@ const CongViec = () => {
     {
       title: "Trạng Thái",
       dataIndex: "TrangThai",
-      render: (val) => (
-        <span>
+      render:  (val) => {
+        return(
+        <Tag color={val === 1 ? "success" : val === 2 ? "warning" : "error"}>
           {val === 1 ? "Hoàn thành" : val === 2 ? "Trễ" : "Chưa hoàn thành"}
-        </span>
-      ),
+        </Tag>
+        )},
     },
     {
       title: "Ưu Tiên",
@@ -213,12 +209,12 @@ const CongViec = () => {
     {
       title: "Ngày Bắt Đầu",
       dataIndex: "NgayBatDau",
-      // render: (val) => <span>{moment(val).format("YYYY-MM-DD")}</span>,
+      render: (val) => <span>{moment(val).format("YYYY-MM-DD")}</span>,
     },
     {
       title: "Ngày Kết Thúc",
       dataIndex: "NgayKetThuc",
-      // render: (val) => <span>{moment(val).format("YYYY-MM-DD")}</span>,
+      render: (val) => <span>{moment(val).format("YYYY-MM-DD")}</span>,
     },
     {
       title: "Action",
@@ -321,9 +317,9 @@ const CongViec = () => {
                   : "Chưa hoàn thành"
               }
             >
-              <Option value="1">Hoàn thành</Option>
-              <Option value="2">Trễ</Option>
-              <Option value="3">Chưa hoàn thành</Option>
+              <Option value={1}>Hoàn thành</Option>
+              <Option value={2}>Trễ</Option>
+              <Option value={3}>Chưa hoàn thành</Option>
             </Select>
           </Form.Item>
           <Form.Item label="Ưu Tiên" name="UuTien">
@@ -334,7 +330,7 @@ const CongViec = () => {
             />
           </Form.Item>
           <Form.Item label="Ngày Bắt Đầu & kết Thúc">
-            {/* <Appdate finish={_onDatePickerFinish} /> */}
+            <Appdate finish={_onDatePickerFinish} />
           </Form.Item>
           <Form.Item
             style={{

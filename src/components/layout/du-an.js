@@ -19,6 +19,7 @@ import {
   Select,
   Popconfirm,
   notification,
+  Tag,
 } from "antd";
 import { useEffect, useRef, useState } from "react";
 import API from "../../utils/API";
@@ -74,7 +75,7 @@ const Duan = () => {
     } else {
       notify.error({
         message: `Không có dự án!`,
-        description: rs.status,
+        description: rs,
         placement: "topRight",
       });
     }
@@ -203,11 +204,12 @@ const Duan = () => {
     {
       title: "Trạng Thái",
       dataIndex: "TrangThai",
-      render: (val) => (
-        <span>
-          {val === 1 ? "Hoàn thành" : val === 2 ? "Trễ" : "Chưa hoàn thành"}
-        </span>
-      ),
+      render: (val) => {
+          return(
+          <Tag color={val === 1 ? "success" : val === 2 ? "warning" : "error"}>
+            {val === 1 ? "Hoàn thành" : val === 2 ? "Trễ" : "Chưa hoàn thành"}
+          </Tag>
+          )},
     },
     {
       title: "Ngày Bắt Đầu",
@@ -239,56 +241,6 @@ const Duan = () => {
   ];
 
   return (
-    // <Layout
-    //   style={{
-    //     minHeight: "100vh",
-    //   }}
-    // >
-    //   <Sider
-    //     collapsible
-    //     theme="light"
-    //     collapsed={collapsed}
-    //     onCollapse={(value) => setCollapsed(value)}
-    //   >
-    //     <div className="demo-logo-vertical" />
-    //     <Search
-    //       placeholder="Tìm kiếm ở đây..."
-    //       onSearch={onSearch}
-    //       enterButton
-    //     />
-
-    //     <Menu
-    //       theme="light"
-    //       defaultSelectedKeys={["1"]}
-    //       mode="inline"
-    //       items={items}
-    //       onClick={onMenuClick}
-    //     />
-    //   </Sider>
-    //   <Layout>
-    //     <Header
-    //       style={{
-    //         padding: 0,
-    //         background: colorBgContainer,
-    //         fontSize: 20,
-    //         fontStyle: Blob,
-    //       }}
-    //     >
-    //       Dự án và công việc
-    //     </Header>
-    //     <Content
-    //       style={{
-    //         margin: "16px",
-    //       }}
-    //     >
-    //       <Breadcrumb style={{}}></Breadcrumb>
-    //       <div
-    //         style={{
-    //           padding: 24,
-    //           minHeight: 650,
-    //           background: colorBgContainer,
-    //         }}
-    //       >
     <>
       <div
         style={{
@@ -350,20 +302,20 @@ const Duan = () => {
           </Form.Item>
           <Form.Item label="Trạng Thái" name="TrangThai">
             <Select
-              // defaultValue={`${duan.TrangThai}` === "1" ? "1" :`${duan.TrangThai}` === "2" ? "2" : "3"}
+              defaultValue={`${duan.TrangThai}` === 1 ? 1 :`${duan.TrangThai}` === 2 ? 2 : 3}
               onChange={(txt) => onChangeText("TrangThai", txt)}
               style={{ width: "100%" }}
               value={
-                `${duan.TrangThai}` === "1"
+                `${duan.TrangThai}` === 1
                   ? "Hoàn thành"
-                  : `${duan.TrangThai}` === "2"
+                  : `${duan.TrangThai}` === 2
                   ? "Trễ"
                   : "Chưa hoàn thành"
               }
             >
-              <Option value="1">Hoàn thành</Option>
-              <Option value="2">Trễ</Option>
-              <Option value="3">Chưa hoàn thành</Option>
+              <Option value={1}>Hoàn thành</Option>
+              <Option value={2}>Trễ</Option>
+              <Option value={3}>Chưa hoàn thành</Option>
             </Select>
           </Form.Item>
           <Form.Item label="Ngày Bắt Đầu & kết Thúc">
