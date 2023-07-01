@@ -108,7 +108,7 @@ const Duan = () => {
     } else {
       notify.error({
         message: `Lỗi xóa dự án!`,
-        description: rs.status,
+        description: rs,
         placement: "topRight",
       });
     }
@@ -125,7 +125,7 @@ const Duan = () => {
       } else {
         notify.error({
           message: `Lỗi sửa dự án!`,
-          description: rs.status,
+          description: rs,
           placement: "topRight",
         });
       }
@@ -138,7 +138,7 @@ const Duan = () => {
       } else {
         notify.error({
           message: `Lỗi thêm dự án!`,
-          description: rs.status,
+          description: rs,
           placement: "topRight",
         });
       }

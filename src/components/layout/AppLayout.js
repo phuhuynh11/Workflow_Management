@@ -6,13 +6,23 @@ import {
   DesktopOutlined,
   AudioOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Layout, Menu, theme, Button, Input, Space } from "antd";
+import {
+  Breadcrumb,
+  Layout,
+  Menu,
+  theme,
+  Button,
+  Input,
+  Space,
+  notification,
+} from "antd";
 import { useState, useEffect } from "react";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useParams, useHistory } from "react-router-dom";
 import { PoweroffOutlined } from "@ant-design/icons";
 import API from "../../utils/API";
 const { Search } = Input;
 const { Header, Content, Sider } = Layout;
+// const onSearch = (value) => console.log(value);
 
 const suffix = (
   <AudioOutlined
@@ -72,9 +82,11 @@ const AppLayout = (props) => {
   const [loadings, setLoadings] = useState([]);
   const [nguoidungs, setNguoidungs] = useState([]);
   const [nguoidung, setNguoidung] = useState({});
-  // useEffect(() => {
-  //   getData();
-  // }, []);
+  const [input, setInput] = useState("");
+  const history = useHistory();
+  const [notify, contextHolder] = notification.useNotification();
+
+
   const enterLoading = (index) => {
     setLoadings((prevLoadings) => {
       const newLoadings = [...prevLoadings];
@@ -89,10 +101,35 @@ const AppLayout = (props) => {
       });
     }, 400);
   };
+
   // const getData = async () => {
-  //   const rs = await API.get(`auth/login/${id}`);
-  //   console.log("kkkkk nguoidung by id", rs);
+  //   const rs = await API.get("nguoidung");
+  //   console.log("kkkkk nguoidung", rs);
+  //   if (rs && rs.length > 0) {
+  //     setInput(rs);
+  //   } else {
+  //     notify.error({
+  //       message: `Không có người dùng!`,
+  //       description: rs,
+  //       placement: "topRight",
+  //     });
+  //   }
   // };
+  // const onSearch = async () => {
+  //   history.push("/User");
+  //   const rs = await API.get("nguoidung");
+  //   if (rs) {
+  //     // setIsModalOpen(false);
+  //     getData();
+  //   } else {
+  //     notify.error({
+  //       message: `Lỗi thêm người dùng!`,
+  //       description: rs,
+  //       placement: "topRight",
+  //     });
+  //   }
+  // };
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -133,14 +170,16 @@ const AppLayout = (props) => {
         >
           <div style={{ marginLeft: "67%", fontSize: 18 }}>
             {/* <a columns={COLUMNS}/> */}
-            <Space direction="vertical">
+            {/* <Space
+              direction="vertical"
+            >
               <Search
                 style={{ marginTop: 17 }}
                 placeholder="input search text"
                 onSearch={onSearch}
                 enterButton
               />
-            </Space>
+            </Space> */}
             <Button
               type="primary"
               icon={<PoweroffOutlined />}
@@ -164,6 +203,7 @@ const AppLayout = (props) => {
             {props.children}
           </div>
         </Content>
+        {contextHolder}
       </Layout>
     </Layout>
   );

@@ -1,7 +1,4 @@
-import {
-  PlusOutlined,
-  CloseOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, CloseOutlined } from "@ant-design/icons";
 
 import {
   Layout,
@@ -20,6 +17,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import API from "../../utils/API";
 import { useHistory } from "react-router-dom";
+const { Search } = Input;
 const { Option } = Select;
 
 const User = () => {
@@ -62,7 +60,28 @@ const User = () => {
     } else {
       notify.error({
         message: `Không có người dùng!`,
-        description: rs.status,
+        description: rs,
+        placement: "topRight",
+      });
+    }
+  };
+  const onSearch = async (value) => {
+    // history.push("/User");
+    const rs = await API.get(`nguoidung/search?keyword=${value}`);
+    // console.log("kkkkk nguoidung", value);
+    console.log("kkkkk search nguoidung", rs);
+
+    // return;
+    if (rs) {
+      // setIsModalOpen(false);
+      setNguoiDungs(rs.nguoiDung);
+    // console.log("kkkkk nguoidungs", nguoidungs);
+    //   nguoidungs = rs;
+    // console.log("kkkkk nguoidungs sau ", nguoidungs);
+    } else {
+      notify.error({
+        message: `Lỗi thêm người dùng!`,
+        description: rs,
         placement: "topRight",
       });
     }
@@ -87,16 +106,16 @@ const User = () => {
     } else {
       notify.error({
         message: `Lỗi xóa người dùng!`,
-        description: rs.status,
+        description: rs,
         placement: "topRight",
       });
     }
   };
   const onFinish = async () => {
     if (isEdit) {
-      if(!nguoidung) return
+      if (!nguoidung) return;
       const fixBodyRequest = {
-        GioiTinh:  nguoidung.GioiTinh,
+        GioiTinh: nguoidung.GioiTinh,
         HoLot: nguoidung.HoLot,
         Ten: nguoidung.Ten,
         Email: nguoidung.Email,
@@ -106,17 +125,20 @@ const User = () => {
         TrangThai: nguoidung.TrangThai,
         Username: nguoidung.Username,
         Password: nguoidung.Password,
-        MaLoaiNguoiDung: nguoidung.MaLoaiNguoiDung
-      }
-      console.log(fixBodyRequest)
-      const rs = await API.put(`nguoidung/${nguoidung.MaNguoiDung}`, fixBodyRequest);
+        MaLoaiNguoiDung: nguoidung.MaLoaiNguoiDung,
+      };
+      console.log(fixBodyRequest);
+      const rs = await API.put(
+        `nguoidung/${nguoidung.MaNguoiDung}`,
+        fixBodyRequest
+      );
       if (rs) {
         setIsModalOpen(false);
         getData();
       } else {
         notify.error({
           message: `Lỗi sửa người dùng!`,
-          description: rs.status,
+          description: rs,
           placement: "topRight",
         });
       }
@@ -128,7 +150,7 @@ const User = () => {
       } else {
         notify.error({
           message: `Lỗi thêm người dùng!`,
-          description: rs.status,
+          description: rs,
           placement: "topRight",
         });
       }
@@ -139,7 +161,7 @@ const User = () => {
       setNguoiDung({ ...nguoidung, [key]: e });
     } else if (["GioiTinh"].includes(key)) {
       setNguoiDung({ ...nguoidung, [key]: e });
-    }else {
+    } else {
       setNguoiDung({ ...nguoidung, [key]: e.target.value || e });
     }
   };
@@ -195,7 +217,13 @@ const User = () => {
       key: "GioiTinh",
       dataIndex: "GioiTinh",
       render: (val) => (
-        <span>{val && val.data[0] === 1 ? "Nam" : val && val.data[0] === 0 ? "Nữ" : ""}</span>
+        <span>
+          {val && val.data[0] === 1
+            ? "Nam"
+            : val && val.data[0] === 0
+            ? "Nữ"
+            : ""}
+        </span>
       ),
     },
     {
@@ -204,8 +232,11 @@ const User = () => {
       dataIndex: "TrangThai",
       render: (val) => {
         return (
-        <Tag color={val === 0 ? "error" : "success"}>{val === 0 ? "Chưa hoàn thành" : "Hoàn thành"}</Tag>
-      )},
+          <Tag color={val === 0 ? "error" : "success"}>
+            {val === 0 ? "Chưa hoàn thành" : "Hoàn thành"}
+          </Tag>
+        );
+      },
     },
     {
       title: "Username",
@@ -220,16 +251,18 @@ const User = () => {
       key: "MaLoaiNguoiDung",
       dataIndex: "MaLoaiNguoiDung",
       render: (val) => {
-        return (
-        <span>{val === null ? "Chưa được thêm" : val}</span>
-      )},
+        return <span>{val === null ? "Chưa được thêm" : val}</span>;
+      },
     },
     {
       title: "Action",
       render: (_, value) => (
         <Space>
           <a onClick={() => onCongviec(value.MaNguoiDung)}>Công việc</a>
-          <a style={{ marginLeft: 5 }} onClick={() => onEdit(value.MaNguoiDung)}>
+          <a
+            style={{ marginLeft: 5 }}
+            onClick={() => onEdit(value.MaNguoiDung)}
+          >
             Sửa
           </a>
           <Popconfirm
@@ -244,7 +277,6 @@ const User = () => {
   ];
 
   return (
-
     <>
       <div
         style={{
@@ -253,6 +285,14 @@ const User = () => {
           marginTop: 5,
         }}
       >
+        <Space direction="vertical">
+          <Search
+            style={{ marginTop: 17 }}
+            placeholder="input search text"
+            onSearch={onSearch}
+            enterButton
+          />
+        </Space>
         <Button type="primary" icon={<PlusOutlined />} onClick={onAdd}>
           Thêm
         </Button>
@@ -346,7 +386,11 @@ const User = () => {
               onChange={(txt) => onChangeText("GioiTinh", txt)}
               style={{ width: "100%" }}
               value={
-                `${nguoidung.GioiTinh}` === 0 ? "Nam" : `${nguoidung.GioiTinh}` === 1 ? "Nữ" : null
+                `${nguoidung.GioiTinh}` === 0
+                  ? "Nam"
+                  : `${nguoidung.GioiTinh}` === 1
+                  ? "Nữ"
+                  : null
               }
             >
               <Option value={1}>Nam</Option>
@@ -355,11 +399,19 @@ const User = () => {
           </Form.Item>
           <Form.Item label="Trạng Thái" name="TrangThai">
             <Select
-              defaultValue={`${nguoidung.TrangThai}` === 0 ? 0 : `${nguoidung.TrangThai}` === 1 ? 1 : ""}
+              defaultValue={
+                `${nguoidung.TrangThai}` === 0
+                  ? 0
+                  : `${nguoidung.TrangThai}` === 1
+                  ? 1
+                  : ""
+              }
               onChange={(txt) => onChangeText("TrangThai", txt)}
               style={{ width: "100%" }}
               value={
-                `${nguoidung.TrangThai}` === 0 ? "Chưa hoàn thành" : "Hoàn thành"
+                `${nguoidung.TrangThai}` === 0
+                  ? "Chưa hoàn thành"
+                  : "Hoàn thành"
               }
             >
               <Option value={1}>Hoàn thành</Option>
@@ -402,7 +454,6 @@ const User = () => {
       </Modal>
       {contextHolder}
     </>
-
   );
 };
 export default User;

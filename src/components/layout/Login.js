@@ -50,7 +50,7 @@ const Login = () => {
     } else {
       console.error({
         message: `Login failed!`,
-        description: rs.status,
+        description: rs,
         placement: "topRight",
       });
     }
